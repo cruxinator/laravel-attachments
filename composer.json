@@ -1,60 +1,80 @@
 {
-    "name": ":vendor_slug/:package_slug",
-    "description": ":package_description",
+    "name": "cruxinator/laravel-attachments",
+    "description": "Unified way to handle media attachments to Laravel models",
     "keywords": [
-        ":vendor_name",
+        "cruxinator",
         "laravel",
-        ":package_slug"
+        "attachments"
     ],
-    "homepage": "https://github.com/:vendor_slug/:package_slug",
+    "homepage": "https://github.com/cruxinator/laravel-attachments",
     "license": "MIT",
     "authors": [
         {
-            "name": ":author_name",
-            "email": "author@domain.com",
+            "name": "Chris Harris",
+            "email": "c.harris@communicationinnovations.com.au",
+            "role": "Developer"
+        },
+	{
+            "name": "Alex Goodwin",
+            "email": "cyberia.resurrection@gmail.com",
             "role": "Developer"
         }
     ],
+    "type": "library",
     "require": {
-        "php": "^7.3|^8.0",
-        "cruxinator/laravel-package": "dev-main"
-
+        "php": "^7.4|^8.0",
+        "cruxinator/laravel-package": "*",
+        "cruxinator/singletableinheritance": "*",
+        "php-ffmpeg/php-ffmpeg": "*",
+        "ext-json": "*",
+        "ext-bcmath": "*",
+        "ext-gd": "*",
+        "cruxinator/responsemodels": "dev-master"
     },
     "require-dev": {
-        "nunomaduro/larastan": "^0.4.0",
-        "orchestra/testbench": "^3.6.7",
+        "nunomaduro/larastan": ">=0.4.0",
+        "orchestra/testbench": "^3.0|^4.0|^5.0|^6.0|^7.0",
+        "orchestra/database": "^3.0|^4.0|^5.0|^6.0|^7.0",
         "phpstan/extension-installer": "*",
         "phpstan/phpstan-deprecation-rules": "*",
         "phpstan/phpstan-phpunit": "*",
-        "phpunit/phpunit": "^7.0",
-        "nunomaduro/collision": "^3.2"
+        "phpunit/phpunit": "^8.5|^9.0",
+        "ext-pdo": "*",
+        "ext-sqlite3": "*",
+        "nunomaduro/collision": "^3.2",
+        "league/flysystem-sftp": "^1.0",
+        "pcov/clobber": "dev-master"
+
     },
     "autoload": {
         "psr-4": {
-            "VendorName\\Skeleton\\": "src"
+            "Cruxinator\\Attachments\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "VendorName\\Skeleton\\Tests\\": "tests"
+            "Cruxinator\\Attachments\\Tests\\": "tests",
+            "Cruxinator\\Tests\\": "tests/",
+            "Cruxinator\\Tests\\Connections\\": "tests/connections/"
         }
     },
     "scripts": {
         "analyse": "vendor/bin/phpstan analyse",
         "test": "vendor/bin/phpunit",
-        "test-coverage": "vendor/bin/phpunit --coverage-html=cover/"
+        "test-coverage": "vendor/bin/phpunit --coverage-html=cover/",
+	"post-autoload-dump": "@php ./vendor/bin/testbench package:discover --ansi"
     },
     "config": {
-        "sort-packages": true
+        "sort-packages": true,
+        "allow-plugins": {
+            "phpstan/extension-installer": true
+        }
     },
     "extra": {
         "laravel": {
             "providers": [
-                "VendorName\\Skeleton\\SkeletonServiceProvider"
-            ],
-            "aliases": {
-                "Skeleton": "VendorName\\Skeleton\\Facades\\Skeleton"
-            }
+                "Cruxinator\\Attachments\\AttachmentsServiceProvider"
+            ]
         }
     },
     "minimum-stability": "dev",
