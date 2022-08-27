@@ -94,8 +94,13 @@ class Attachment extends Model implements AttachmentContract
      * @return Attachment|null
      * @throws Exception
      */
-    public static function attach(?string $uuid, HasAttachments $model, $options = []): ?self
+    public static function attach(?string $uuid, Model $model, $options = []): ?self
     {
+        $traits = class_uses_recursive($model);
+        if (!array_key_exists(HasAttachments::class, $traits)) {
+            throw new Exception ('Supplied Model must use Cruxinator\Attachments\Traits\HasAttachments trait');
+        }
+
         /** @var Attachment $attachment */
         $attachment = self::where('uuid', $uuid)->first();
 
@@ -105,11 +110,13 @@ class Attachment extends Model implements AttachmentContract
 
         // The dz_session_key is set by the proposed DropzoneController for security check
         if ($attachment->getMetadata('dz_session_key')) {
-            $meta = $attachment->metadata;
+            $meta = $attachment->getMetadata();
 
             unset($meta['dz_session_key']);
 
-            $attachment->metadata = $meta;
+            // Brute force over ignorance to clear dropzone session key
+            $attachment->setAttribute('metadata', $meta);
+            $attachment->save();
         }
 
         $options = Arr::only($options, config('attachments.attributes'));
@@ -119,8 +126,7 @@ class Attachment extends Model implements AttachmentContract
         if ($found = $model->attachments()->where('key', '=', $attachment->key)->first()) {
             $found->delete();
         }
-
-        return $attachment->attachedTo()->associate($model)->save() ? $attachment : null;
+        return $attachment->attachedTo()->associate($model)->save() ? $attachment->refresh() : null;
     }
 
     /**
@@ -426,7 +432,7 @@ class Attachment extends Model implements AttachmentContract
         // TODO: Figure out why $this->metadata keeps returning empty
         $meta = $this->getAttribute('metadata');
         if (is_null($key)) {
-            return $meta;
+            return $meta ?? [];
         }
 
         return Arr::get($meta, $key, $default);
