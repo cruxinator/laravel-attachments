@@ -4,6 +4,8 @@
 namespace Tests\Packages\Attachments;
 
 use Cruxinator\Attachments\Tests\Fixtures\User;
+use Exception;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use League\Flysystem\Adapter\Local;
@@ -224,5 +226,95 @@ class AttachmentTest extends TestCase
 
         $this->assertEquals(3, $foo->attachments()->count());
         $this->assertEquals(1, $foo->attachments()->inGroup('aybabtu')->count());
+    }
+
+    public function testSaveEmptyMetadata()
+    {
+        $meta = ['dz_session_key' => 'dropzone'];
+
+        $att = new Attachment();
+        $att->disk = 'local';
+        $att->filepath = '';
+        $att->filename = '';
+        $att->filetype = '';
+        $att->filesize = 0;
+        $att->attachable_type = '';
+        $att->attachable_id = 0;
+        $att->group = 'aybabtu';
+        $att->metadata = $meta;
+        $att->save();
+
+        $this->assertEquals('dropzone', $att->getMetadata('dz_session_key'));
+        $meta = $att->getMetadata();
+        unset($meta['dz_session_key']);
+        $att->metadata = $meta;
+        $this->assertTrue($att->save());
+        $att->refresh();
+
+        $this->assertNull($att->getMetadata('dz_session_key'), 'Dropzone key should be null');
+    }
+
+    public function testAttachNullUuid()
+    {
+        $foo = new User(['name' => 'name']);
+        $this->assertTrue($foo->save());
+
+        $result = Attachment::attach(null, $foo);
+        $this->assertNull($result);
+    }
+
+    public function testAttachExistingUuid()
+    {
+        $foo = new User(['name' => 'name']);
+        $this->assertTrue($foo->save());
+
+        $att = new Attachment();
+        $att->disk = 'local';
+        $att->filepath = '';
+        $att->filename = '';
+        $att->filetype = '';
+        $att->filesize = 0;
+        $att->attachable_type = '';
+        $att->attachable_id = 0;
+        $att->group = 'aybabtu';
+        $att->save();
+
+        $this->assertEquals(0, $foo->attachments()->count(), 'Should have no attachments initially');
+        $res = Attachment::attach($att->uuid, $foo);
+        $this->assertNotNull($res);
+        $this->assertEquals(1, $foo->attachments()->count(), 'Should have exactly 1 attachment after attaching');
+    }
+
+    /**
+     * @throws Exception
+     */
+    public function testClearDropzoneKeyOnAttach()
+    {
+        $foo = new User(['name' => 'name']);
+        $this->assertTrue($foo->save());
+
+        $att = new Attachment();
+        $att->disk = 'local';
+        $att->filepath = '';
+        $att->filename = '';
+        $att->filetype = '';
+        $att->filesize = 0;
+        $att->attachable_type = '';
+        $att->attachable_id = 0;
+        $att->group = 'aybabtu';
+        $att->save();
+
+        $meta = ['dz_session_key' => 'dropzone'];
+        $att->metadata = $meta;
+        $this->assertTrue($att->save());
+        $this->assertNotNull($att->refresh()->getMetadata('dz_session_key'), 'Dropzone key should be set in metadata');
+
+        $this->assertEquals(0, $foo->attachments()->count(), 'Should have no attachments initially');
+        $res = Attachment::attach($att->uuid, $foo);
+        $this->assertNotNull($res);
+        $this->assertEquals(1, $foo->attachments()->count(), 'Should have exactly 1 attachment after attaching');
+
+        $att->refresh();
+        $this->assertNull($att->getMetadata('dz_session_key'), 'Dropzone key should be cleared by attachment');
     }
 }
