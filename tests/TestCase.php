@@ -103,4 +103,12 @@ class TestCase extends BaseTestCase
         };
         return call_user_func($reset->bindTo($provider, get_class($provider)));
     }
+    protected function tearDown(): void
+    {
+        $config = app('config');
+        $router = app('router');
+        parent::tearDown();
+        app()->instance('config', $config);
+        app()->instance('router', $router);
+    }
 }
