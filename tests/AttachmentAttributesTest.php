@@ -41,8 +41,8 @@ class AttachmentAttributesTest extends TestCase
             'attachable_type' => '',
             'attachable_id' => '0',
             'metadata' => null,
-            'created_at' => $att->created_at->format('Y-m-d') . 'T' . $att->created_at->format('h:i:s.u') . 'Z',
-            'updated_at' => $att->updated_at->format('Y-m-d') . 'T' . $att->updated_at->format('h:i:s.u') . 'Z',
+            'created_at' => $att->created_at->toJSON(),
+            'updated_at' => $att->updated_at->toJSON(),
             'url' => $att->url,
             'url_inline' => $att->url_inline,
         ];
