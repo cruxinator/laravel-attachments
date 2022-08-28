@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Cruxinator\Attachments\Tests;
 
 use Cruxinator\Attachments\Models\Attachment;

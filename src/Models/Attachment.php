@@ -416,7 +416,7 @@ class Attachment extends Model implements AttachmentContract
             'Content-Disposition' => $disposition.'; filename="'.$this->filename.'"',
             'Cache-Control' => 'private, no-store, no-cache, must-revalidate, pre-check=0, post-check=0, max-age=0',
             'Accept-Ranges' => 'bytes',
-            'Content-Length' => $this->filesize
+            'Content-Length' => $this->filesize,
         ];
 
         return response($this->getContents(), 200, $headers);
