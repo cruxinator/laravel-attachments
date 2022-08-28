@@ -31,6 +31,15 @@ jobs:
             testbench: ^6.25.0
           - laravel: 9.0
             testbench: ^7.7.0
+	exclude:
+	  - laravel: 9.0
+	    php: 7.4
+	  - laravel: 5.8
+	    php: [8.0, 8.1]
+	  - laravel: 5.7
+	    php: [8.0, 8.1]
+    	  - laravel: 5.6
+	    php: [8.0, 8.1]
 
     name: P${{ matrix.php }} - L${{ matrix.laravel }} - ${{ matrix.stability }} - ${{ matrix.os }}
 
@@ -52,6 +61,7 @@ jobs:
 
       - name: Install dependencies
         run: |
+       	  composer config --no-plugins allow-plugins.ocramius/package-versions 
           composer require "laravel/framework:^${{ matrix.laravel }}" "orchestra/testbench:${{ matrix.testbench }}" --no-interaction --no-update --ignore-platform-req=ext-pcov
           composer update --${{ matrix.stability }} --prefer-dist --no-interaction --ignore-platform-req=ext-pcov
 
