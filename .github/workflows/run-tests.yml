@@ -61,7 +61,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-       	  composer config --no-plugins allow-plugins.ocramius/package-versions 
+          composer config --no-plugins allow-plugins.ocramius/package-versions 
           composer require "laravel/framework:^${{ matrix.laravel }}" "orchestra/testbench:${{ matrix.testbench }}" --no-interaction --no-update --ignore-platform-req=ext-pcov
           composer update --${{ matrix.stability }} --prefer-dist --no-interaction --ignore-platform-req=ext-pcov
 
