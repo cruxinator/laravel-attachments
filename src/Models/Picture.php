@@ -1,12 +1,11 @@
 <?php
 
-
 namespace Cruxinator\Attachments\Models;
-
 
 use App\Models\Beer;
 use App\Models\Brewery;
 use App\Models\Venue;
+
 use function imagecolorat;
 use function imagecolorsforindex;
 use function imagesx;
@@ -56,6 +55,7 @@ class Picture extends Media
     public function getLuminanceAttribute(): ?int
     {
         $self = $this;
+
         return $this->getMetadata(
             'image.luminance',
             function () use ($self) {

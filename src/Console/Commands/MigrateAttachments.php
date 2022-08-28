@@ -2,13 +2,13 @@
 
 namespace Cruxinator\Attachments\Console\Commands;
 
+use Cruxinator\Attachments\Models\Attachment;
 use Exception;
 use Illuminate\Console\Command;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Support\Facades\Lang;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
-use Cruxinator\Attachments\Models\Attachment;
 use Symfony\Component\Console\Input\InputArgument;
 use Throwable;
 
@@ -22,11 +22,17 @@ class MigrateAttachments extends Command
 
         $this->setDescription(Lang::get('attachments::messages.console.migrate_description'));
 
-        $this->getDefinition()->addArgument(new InputArgument('from', InputArgument::REQUIRED,
-            Lang::get('attachments::messages.console.migrate_option_from')));
+        $this->getDefinition()->addArgument(new InputArgument(
+            'from',
+            InputArgument::REQUIRED,
+            Lang::get('attachments::messages.console.migrate_option_from')
+        ));
 
-        $this->getDefinition()->addArgument(new InputArgument('to', InputArgument::REQUIRED,
-            Lang::get('attachments::messages.console.migrate_option_to')));
+        $this->getDefinition()->addArgument(new InputArgument(
+            'to',
+            InputArgument::REQUIRED,
+            Lang::get('attachments::messages.console.migrate_option_to')
+        ));
     }
 
     public function handle()
@@ -55,6 +61,7 @@ class MigrateAttachments extends Command
         } catch (Exception $e) {
             $this->error(Lang::get('attachments::messages.console.migrate_invalid_from'));
         }
+
         try {
             Storage::disk($this->argument('to'))
                 ->has('.');

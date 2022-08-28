@@ -45,7 +45,7 @@ return [
     'attachment_sub_models' => [
         Cruxinator\Attachments\Models\Media::class,
         Cruxinator\Attachments\Models\Document::class,
-        Cruxinator\Attachments\Models\Archive::class
+        Cruxinator\Attachments\Models\Archive::class,
     ],
 
     /*
@@ -97,7 +97,7 @@ return [
     |
     */
     'storage_directory' => [
-        'prefix' =>  rtrim(env('ATTACHMENTS_STORAGE_DIRECTORY_PREFIX', 'attachments'), '/'),
+        'prefix' => rtrim(env('ATTACHMENTS_STORAGE_DIRECTORY_PREFIX', 'attachments'), '/'),
     ],
     /*
     |--------------------------------------------------------------------------
@@ -117,10 +117,10 @@ return [
     |
     */
     'database' => [
-        'connection' =>  env('ATTACHMENTS_DATABASE_CONNECTION'),
+        'connection' => env('ATTACHMENTS_DATABASE_CONNECTION'),
     ],
 
     'proxied_adapters' => [
 
-    ]
+    ],
 ];

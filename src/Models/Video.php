@@ -1,24 +1,20 @@
 <?php
 
-
 namespace Cruxinator\Attachments\Models;
 
-
 use App\Helpers\BC;
-use Cruxinator\Attachments\Contracts\IPreviewable;
 use App\Utils\GifTranscodeFilter;
 use App\Utils\PixelFormatFilter;
 use App\Utils\VideoMuteFilter;
-use Exception;
+use Cruxinator\Attachments\Contracts\IPreviewable;
+use Cruxinator\Attachments\Traits\HasAttachments;
+use Cruxinator\Package\Strings\MyStr;
+use Cruxinator\TemporaryDirectory\TemporaryDirectory;
 use FFMpeg\Coordinate\TimeCode;
 use FFMpeg\Exception\ExecutableNotFoundException;
 use FFMpeg\FFMpeg;
 use FFMpeg\Format\Video\X264;
 use Illuminate\Support\Facades\File;
-use Cruxinator\Attachments\Models\Attachment;
-use Cruxinator\Attachments\Traits\HasAttachments;
-use Cruxinator\Package\Strings\MyStr;
-use Cruxinator\TemporaryDirectory\TemporaryDirectory;
 
 class Video extends Media implements IPreviewable
 {
@@ -34,17 +30,17 @@ class Video extends Media implements IPreviewable
         );
     }
 
-    public function getPreviewAttribute():?ResizablePicture
+    public function getPreviewAttribute(): ?ResizablePicture
     {
         /** @noinspection PhpIncompatibleReturnTypeInspection */
         return $this->attachment("preview.image") ?? $this->generatePreview(); //TODO: sandi, here we need a null coelecence to a default "image not avaliable" image.
     }
 
-    public function storeVideo(){
-
+    public function storeVideo()
+    {
         $tempDir = new TemporaryDirectory();
         $originalFile = $tempDir->path("original." . $this->filename);
-        File::put($originalFile,$this->getContents());
+        File::put($originalFile, $this->getContents());
 
         $ffmpegResource = $this->getFFMpeg();
         $raw = $ffmpegResource->open($originalFile);
@@ -56,24 +52,26 @@ class Video extends Media implements IPreviewable
         }
         $format = new X264('libmp3lame');
         $transcodedFile = $tempDir->path($this->filename);
-        $image = $raw->save($format,$transcodedFile );
-        $this->attachToModel($originalFile,[
+        $image = $raw->save($format, $transcodedFile);
+        $this->attachToModel($originalFile, [
             'key' => 'original',
-            'type'=> Video::class,
+            'type' => Video::class,
             'filename' => $this->filename,
-            'disk' => $this->disk
+            'disk' => $this->disk,
         ]);
         $this->putFile($transcodedFile);
         $this->setStored();
     }
 
-    protected function setStored(){
+    protected function setStored()
+    {
         $meta = $this->metadata;
         $this->metadata['image.size'] = true;
         $this->metadata = $meta;
     }
 
-    public function getIsStoredAttribute():bool{
+    public function getIsStoredAttribute(): bool
+    {
         return $this->getMetadata('is_stored', false);
     }
 
@@ -82,7 +80,7 @@ class Video extends Media implements IPreviewable
         $tempDir = new TemporaryDirectory();
         $tempDir->create();
         $path = $tempDir->path("old." . $this->filename);
-        File::put($path,$this->getContents());
+        File::put($path, $this->getContents());
         $ffmpegResource = $this->getFFMpeg();
         $raw = $ffmpegResource->open($path);
         $raw->addFilter(new VideoMuteFilter());
@@ -96,15 +94,16 @@ class Video extends Media implements IPreviewable
         $frame = $raw->frame(TimeCode::fromSeconds(0));
         $frame->save($newPath);
 
-        $preview = $this->attachToModel($newPath,[
+        $preview = $this->attachToModel($newPath, [
             'key' => 'preview.image',
-            'type'=> ResizablePicture::class,
+            'type' => ResizablePicture::class,
             'filename' => $nuFilename,
-            'disk' => $this->disk
+            'disk' => $this->disk,
         ]);
-        if($preview != null) {
+        if ($preview != null) {
             assert($preview instanceof ResizablePicture, "the preview should be a resizablePicture");
             $tempDir->delete();
+
             return $preview;
         }
         //TODO: sandi we need to log an error at this point to indicate that somthing went wrong. includeing the $tempDir (because it still exists)
@@ -131,6 +130,7 @@ class Video extends Media implements IPreviewable
         $stem = BC::ffmpegBase();
         $ffMpegBinary = DIRECTORY_SEPARATOR == '/' ? 'ffmpeg' : 'ffmpeg.exe';
         $ffProbeBinary = DIRECTORY_SEPARATOR == '/' ? 'ffprobe' : 'ffprobe.exe';
+
         try {
             $ffmpegResource = FFMpeg::create([
                 'ffmpeg.binaries' => $stem.$ffMpegBinary,

@@ -1,12 +1,11 @@
 <?php
 
-
 namespace Cruxinator\Attachments\Models;
 
+use Cruxinator\Attachments\Traits\HasAttachments;
 use Exception;
 use Illuminate\Database\Eloquent\Model;
 use InvalidArgumentException;
-use Cruxinator\Attachments\Traits\HasAttachments;
 use RuntimeException;
 
 class ResizablePicture extends Picture
@@ -16,7 +15,7 @@ class ResizablePicture extends Picture
     /**
      * @throws Exception
      */
-    public function ofSize(int $x, int $y, bool $inverse = false, bool $grayScale = false, int $twist = 0, int $aspect = 0):?Picture
+    public function ofSize(int $x, int $y, bool $inverse = false, bool $grayScale = false, int $twist = 0, int $aspect = 0): ?Picture
     {
         /** @noinspection PhpIncompatibleReturnTypeInspection */
         return $this->attachment($this->getSizeKey($x, $y, $inverse, $grayScale, $twist, $aspect))
@@ -26,15 +25,16 @@ class ResizablePicture extends Picture
     /**
      * @throws Exception
      */
-    public function ofProfile(string $profilerName = null, bool $inverse = false, bool $grayScale = false):?Picture
+    public function ofProfile(string $profilerName = null, bool $inverse = false, bool $grayScale = false): ?Picture
     {
         $size = empty($profilerName) ? $this->getXy() : config('image.sizes.'.$profilerName);
-        if (!is_array($size) || !array_key_exists('width', $size)) {
+        if (! is_array($size) || ! array_key_exists('width', $size)) {
             throw new InvalidArgumentException(
                 "An Attempt to load profile" . var_export($profilerName) .
                 " didn't yield a valid sizes array. received data ". var_export($size)
             );
         }
+
         return $this->ofSize($size["width"], $size["height"], $inverse, $grayScale, $size['rotation'] ?? 0, $size['aspect'] ?? 0);
     }
 
@@ -44,12 +44,14 @@ class ResizablePicture extends Picture
         if (0 !== $twist || 0 !== $aspect) {
             $key .= '_'.$twist . '_' . $aspect;
         }
+
         return $key;
     }
 
     private function getXy()
     {
         $self = $this;
+
         return $this->getMetadata(
             'image.size',
             function () use ($self) {
@@ -60,6 +62,7 @@ class ResizablePicture extends Picture
                 $imgSize = ['width' => $x, 'height' => $y];
                 $self->metadata['image.size'] = $imgSize;
                 $self->save();
+
                 return $self->metadata['image.size'];
             }
         );
@@ -68,7 +71,7 @@ class ResizablePicture extends Picture
     /**
      * @throws Exception
      */
-    private function buildResize(int $width, int $height, bool $inverse = false, bool $grayScale = false, int $twist = 0, int $aspect = 0):?Picture
+    private function buildResize(int $width, int $height, bool $inverse = false, bool $grayScale = false, int $twist = 0, int $aspect = 0): ?Picture
     {
         $src = imagecreatefromstring($this->getContents());
         $oldWidth = imagesx($src);
@@ -84,11 +87,11 @@ class ResizablePicture extends Picture
                 $newWidth = $width;
             }
         } else {
-            if (floatval($width/$height) > $r) {
-                $newWidth = $height*$r;
+            if (floatval($width / $height) > $r) {
+                $newWidth = $height * $r;
                 $newHeight = $height;
             } else {
-                $newHeight = $width/$r;
+                $newHeight = $width / $r;
                 $newWidth = $width;
             }
         }
@@ -112,11 +115,13 @@ class ResizablePicture extends Picture
         imagepng($dst, $fp);
         rewind($fp);
         $key = $this->getSizeKey($width, $height, $inverse, $grayScale, $twist, $aspect);
-        $attachment = $this->attachToModel($fp, [
+        $attachment = $this->attachToModel(
+            $fp,
+            [
                 'key' => $key,
-                'type'=> Picture::class,
+                'type' => Picture::class,
                 'filename' => $this->filename,
-                'disk' => $this->disk
+                'disk' => $this->disk,
             ]
         );
         $attachment->key = $key;
@@ -125,6 +130,7 @@ class ResizablePicture extends Picture
         imagedestroy($dst);
         fclose($fp);
         assert($attachment instanceof Picture);
+
         return $attachment;
     }
 
@@ -149,6 +155,7 @@ class ResizablePicture extends Picture
     public static function keyAttachment(Model $model, string $key): ResizablePicture
     {
         $att = $model->attachment($key);
+
         return $att;
     }
 
@@ -164,6 +171,7 @@ class ResizablePicture extends Picture
         if ('\\' == DIRECTORY_SEPARATOR) {
             $path = str_replace('/', '\\', $path);
         }
+
         return $path;
     }
 }

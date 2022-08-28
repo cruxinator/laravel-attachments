@@ -1,10 +1,8 @@
 <?php
 
-
 namespace Cruxinator\Attachments\Tests;
 
 use Cruxinator\Attachments\Models\Attachment;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\File;

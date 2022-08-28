@@ -2,14 +2,14 @@
 
 namespace Cruxinator\Attachments\Traits;
 
+use Cruxinator\Attachments\Contracts\AttachmentContract;
+use Cruxinator\Attachments\Models\Attachment;
 use Exception;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Arr;
-use Cruxinator\Attachments\Contracts\AttachmentContract;
-use Cruxinator\Attachments\Models\Attachment;
 
 /**
  * Trait HasAttachments

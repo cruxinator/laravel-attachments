@@ -1,14 +1,10 @@
 <?php
 
-
 namespace Cruxinator\Attachments\Tests;
 
-
 use Cruxinator\Attachments\Models\Attachment;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\Route;
 
 class AttachmentAttributesTest extends TestCase
 {
@@ -48,7 +44,7 @@ class AttachmentAttributesTest extends TestCase
             'created_at' => $att->created_at->format('Y-m-d') . 'T' . $att->created_at->format('h:i:s.u') . 'Z',
             'updated_at' => $att->updated_at->format('Y-m-d') . 'T' . $att->updated_at->format('h:i:s.u') . 'Z',
             'url' => $att->url,
-            'url_inline' => $att->url_inline
+            'url_inline' => $att->url_inline,
         ];
         $actual = $att->toArray();
         $this->assertEquals($expected, $actual);

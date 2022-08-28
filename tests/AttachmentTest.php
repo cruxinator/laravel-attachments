@@ -1,18 +1,16 @@
 <?php
 
-
 namespace Tests\Packages\Attachments;
 
+use Cruxinator\Attachments\Models\Attachment;
+use Cruxinator\Attachments\Models\Picture;
 use Cruxinator\Attachments\Tests\Fixtures\User;
+use Cruxinator\Attachments\Tests\TestCase;
 use Exception;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use League\Flysystem\Adapter\Local;
 use League\Flysystem\Sftp\SftpAdapter;
-use Cruxinator\Attachments\Models\Attachment;
-use Cruxinator\Attachments\Models\Picture;
-use Cruxinator\Attachments\Tests\TestCase;
 
 class AttachmentTest extends TestCase
 {
@@ -45,23 +43,23 @@ class AttachmentTest extends TestCase
         $filesystems = [
             'local' => [
                 'driver' => 'local',
-                'root' => public_path()
+                'root' => public_path(),
             ],
             'storage' => [
                 'driver' => 'local',
-                'root' => base_path('storage/app')
+                'root' => base_path('storage/app'),
             ],
             'gubbins' => [
-                'driver' => 'sftp'
+                'driver' => 'sftp',
             ],
             'local-alias' => [
                 'driver' => 'alias',
-                'target' => $aliasDisk
+                'target' => $aliasDisk,
             ],
             'gubbins-alias' => [
                 'driver' => 'alias',
-                'target' => $aliasDisk
-            ]
+                'target' => $aliasDisk,
+            ],
         ];
         if ('local' == $selectedDisk) {
             $filesystems['local']['driver'] = $driver;
@@ -104,10 +102,10 @@ class AttachmentTest extends TestCase
         $filesystems = [
             'local' => [
                 'driver' => 'local',
-                'root' => public_path()
+                'root' => public_path(),
             ],
             'gubbins' => [
-                'driver' => 'sftp'
+                'driver' => 'sftp',
             ],
         ];
         config(['filesystems.disks' => $filesystems]);
@@ -169,19 +167,23 @@ class AttachmentTest extends TestCase
                 switch ($inputClass) {
                     case 'existing':
                         $foo = $att;
+
                         break;
                     default:
                         $foo = app(Attachment::class);
                 }
+
                 break;
             case 'key':
                 switch ($inputClass) {
                     case 'existing':
                         $foo = $att->getKey();
+
                         break;
                     default:
                         $foo = -1;
                 }
+
                 break;
         }
 
