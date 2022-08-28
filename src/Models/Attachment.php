@@ -405,21 +405,21 @@ class Attachment extends Model implements AttachmentContract
 
     //region "File handling"
 
-    public function output($disposition = 'inline'): bool
+    public function output($disposition = 'inline')
     {
         if ($this->fireModelEvent('outputting') === false) {
             return false;
         }
 
-        header('Content-type: '.$this->filetype);
-        header('Content-Disposition: '.$disposition.'; filename="'.$this->filename.'"');
-        header('Cache-Control: private');
-        header('Cache-Control: no-store, no-cache, must-revalidate');
-        header('Cache-Control: pre-check=0, post-check=0, max-age=0');
-        header('Accept-Ranges: bytes');
-        header('Content-Length: '.$this->filesize);
-        //TODO: There is probably a more laravel friendly way to do this.
-        exit($this->getContents());
+        $headers = [
+            'Content-type' => $this->filetype,
+            'Content-Disposition' => $disposition.'; filename="'.$this->filename.'"',
+            'Cache-Control' => 'private, no-store, no-cache, must-revalidate, pre-check=0, post-check=0, max-age=0',
+            'Accept-Ranges' => 'bytes',
+            'Content-Length' => $this->filesize
+        ];
+
+        return response($this->getContents(), 200, $headers);
     }
 
     /**
