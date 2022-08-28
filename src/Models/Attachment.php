@@ -132,13 +132,13 @@ class Attachment extends Model implements AttachmentContract
     /**
      * Creates a file object from a file an uploaded file.
      *
-     * @param UploadedFile $uploadedFile source file
+     * @param UploadedFile|null $uploadedFile source file
      * @param string|null $disk target storage disk
      *
      * @return $this|null
      * @throws FileNotFoundException
      */
-    public function fromPost(UploadedFile $uploadedFile, ?string $disk = null): ?AttachmentContract
+    public function fromPost(?UploadedFile $uploadedFile, ?string $disk = null): ?AttachmentContract
     {
         if ($uploadedFile === null) {
             return null;
@@ -157,13 +157,13 @@ class Attachment extends Model implements AttachmentContract
     /**
      * Creates a file object from a file on the disk.
      *
-     * @param string $filePath source file
+     * @param string|null $filePath source file
      * @param string|null $disk target storage disk
      *
      * @return $this|null
      * @throws FileNotFoundException
      */
-    public function fromFile(string $filePath, ?string $disk = null) :?AttachmentContract
+    public function fromFile(?string $filePath, ?string $disk = null) :?AttachmentContract
     {
         if ($filePath === null) {
             return null;
