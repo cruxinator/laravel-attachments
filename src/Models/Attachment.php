@@ -352,21 +352,19 @@ class Attachment extends Model implements AttachmentContract
     /** @noinspection PhpUnused Attribute used by laravel dynamically*/
     public function getUrlAttribute(): string
     {
-        if ($this->isLocalStorage() || $this->isProxiedAdapter()) {
+        if ($this->useProxy()) {
             return $this->proxy_url;
-        } else {
-            return Storage::disk($this->disk)->url($this->filepath);
         }
+        return Storage::disk($this->disk)->url($this->filepath);
     }
 
     /** @noinspection PhpUnused Attribute used by laravel dynamically*/
     public function getUrlInlineAttribute(): string
     {
-        if ($this->isLocalStorage() || $this->isProxiedAdapter()) {
+        if ($this->useProxy()) {
             return $this->proxy_url_inline;
-        } else {
-            return Storage::disk($this->disk)->url($this->filepath);
         }
+        return Storage::disk($this->disk)->url($this->filepath);
     }
 
     /** @noinspection PhpUnused Attribute used by laravel dynamically*/
@@ -400,6 +398,11 @@ class Attachment extends Model implements AttachmentContract
             'url' => $this->url,
             'url_inline' => $this->url_inline,
         ]);
+    }
+
+    protected function useProxy(): bool
+    {
+        return $this->isLocalStorage() || $this->isProxiedAdapter();
     }
     //endregion
 
