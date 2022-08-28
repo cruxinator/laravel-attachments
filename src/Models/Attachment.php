@@ -668,7 +668,8 @@ class Attachment extends Model implements AttachmentContract
             return null;
         }
 
-        return (is_countable($this->storageCommand('allFiles', $dir)) ? count($this->storageCommand('allFiles', $dir)) : 0) === 0;
+        $files = $this->storageCommand('allFiles', $dir);
+        return (is_countable($files) ? count($files) : 0) === 0;
     }
 
     /**
