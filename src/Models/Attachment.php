@@ -474,11 +474,7 @@ class Attachment extends Model implements AttachmentContract
 
         $destinationPath = $this->getLocalRootPath().'/'.pathinfo($filePath, PATHINFO_DIRNAME).'/';
 
-        if (
-            ! FileHelper::isDirectory($destinationPath) &&
-            ! FileHelper::makeDirectory($destinationPath, 0777, true, true) &&
-            ! FileHelper::isDirectory($destinationPath)
-        ) {
+        if ($this->checkPath($destinationPath)) {
             $error = error_get_last();
             if (null !== $error) {
                 trigger_error($error['message'], E_USER_WARNING);
@@ -512,11 +508,7 @@ class Attachment extends Model implements AttachmentContract
         $destinationPath = $this->getLocalRootPath().'/'.pathinfo($filePath, PATHINFO_DIRNAME).'/';
         $destinationPath = str_replace('/', DIRECTORY_SEPARATOR, $destinationPath);
 
-        if (
-            ! FileHelper::isDirectory($destinationPath) &&
-            ! FileHelper::makeDirectory($destinationPath, 0777, true, true) &&
-            ! FileHelper::isDirectory($destinationPath)
-        ) {
+        if ($this->checkPath($destinationPath)) {
             $lastError = error_get_last();
 
             if (null !== $lastError) {
@@ -826,5 +818,16 @@ class Attachment extends Model implements AttachmentContract
         }
 
         return $s;
+    }
+
+    /**
+     * @param $destinationPath
+     * @return bool
+     */
+    protected function checkPath($destinationPath): bool
+    {
+        return !FileHelper::isDirectory($destinationPath) &&
+            !FileHelper::makeDirectory($destinationPath, 0777, true, true) &&
+            !FileHelper::isDirectory($destinationPath);
     }
 }
