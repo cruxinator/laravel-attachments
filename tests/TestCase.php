@@ -44,6 +44,19 @@ class TestCase extends BaseTestCase
             Archive::class
         ]);
 
+        // spawn config defaults for routes
+        $app['config']->set('attachments.routes', [
+            'publish' => true,
+            'prefix' => 'attachments',
+            'middleware' => 'web',
+            'pattern' => '/{id}/{name}',
+            'shared_pattern' => '/shared/{token}',
+            'dropzone' => [
+                'upload_pattern' => '/dropzone',
+                'delete_pattern' => '/dropzone/{id}',
+            ],
+        ]);
+
         // Setup default database to use sqlite :memory:
         $app['config']->set('database.default', 'testbench');
         $app['config']->set('database.connections.testbench', [
