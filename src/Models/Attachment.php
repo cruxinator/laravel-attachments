@@ -144,11 +144,11 @@ class Attachment extends Model implements AttachmentContract
             return null;
         }
 
-        $this->disk = $this->disk ?: ($disk ?: $this->getDefaultStorageDriver());
+        $this->disk = $this->populateDisk($disk);
         $this->filename = $uploadedFile->getClientOriginalName();
         $this->filesize = method_exists($uploadedFile, 'getSize') ? $uploadedFile->getSize() : $uploadedFile->getClientSize();
         $this->filetype = $uploadedFile->getMimeType();
-        $this->filepath = $this->filepath ?: ($this->getStorageDirectory().$this->getPartitionDirectory().$this->getDiskName());
+        $this->filepath = $this->buildFilepath();
         $this->putFile($uploadedFile->getRealPath(), $this->filepath);
 
         return $this;
@@ -169,13 +169,13 @@ class Attachment extends Model implements AttachmentContract
             return null;
         }
 
-        $disk = $this->disk ?: ($disk ?: $this->getDefaultStorageDriver());
+        $disk = $this->populateDisk($disk);
 
         $this->disk = $disk;
         $this->filename = File::baseName($filePath);
         $this->filesize = File::size($filePath);
         $this->filetype = File::mimeType($filePath);
-        $this->filepath = $this->filepath ?: ($this->getStorageDirectory().$this->getPartitionDirectory().$this->getDiskName());
+        $this->filepath = $this->buildFilepath();
         $this->putFile($filePath, $this->filepath);
 
         return $this;
@@ -196,11 +196,11 @@ class Attachment extends Model implements AttachmentContract
             return null;
         }
 
-        $this->disk = $this->disk ?: ($disk ?: $this->getDefaultStorageDriver());
+        $this->disk = $this->populateDisk($disk);
 
         //$driver = Storage::disk($this->disk);
         $this->filename = $filename;
-        $this->filepath = $this->filepath ?: ($this->getStorageDirectory().$this->getPartitionDirectory().$this->getDiskName());
+        $this->filepath = $this->buildFilepath();
 
         $this->putStream($stream, $this->filepath);
         if($this->isLocalStorage()) {
@@ -218,6 +218,16 @@ class Attachment extends Model implements AttachmentContract
 
     protected function getDefaultStorageDriver(){
         return config('attachments.storage_default_filesystem') ?? Storage::getDefaultDriver();
+    }
+
+    protected function populateDisk(?string $disk): string
+    {
+        return $this->disk ?: ($disk ?: $this->getDefaultStorageDriver());
+    }
+
+    protected function buildFilepath(): string
+    {
+        return $this->filepath ?: ($this->getStorageDirectory().$this->getPartitionDirectory().$this->getDiskName());
     }
 
     //endregion
