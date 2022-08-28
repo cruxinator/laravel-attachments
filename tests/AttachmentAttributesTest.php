@@ -24,6 +24,8 @@ class AttachmentAttributesTest extends TestCase
         $att->refresh();
         $this->assertTrue($att->exists);
 
+        $format = $att->getDateFormat();
+
         $expected = [
             'id' => $att->getKey(),
             'type' => Attachment::class,
@@ -41,8 +43,8 @@ class AttachmentAttributesTest extends TestCase
             'attachable_type' => '',
             'attachable_id' => '0',
             'metadata' => null,
-            'created_at' => $att->created_at->toJSON(),
-            'updated_at' => $att->updated_at->toJSON(),
+            'created_at' => $att->created_at->format($format),
+            'updated_at' => $att->updated_at->format($format),
             'url' => $att->url,
             'url_inline' => $att->url_inline,
         ];
