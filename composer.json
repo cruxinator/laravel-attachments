@@ -61,8 +61,7 @@
     "scripts": {
         "analyse": "vendor/bin/phpstan analyse",
         "test": "vendor/bin/phpunit",
-        "test-coverage": "vendor/bin/phpunit --coverage-html=cover/",
-	"post-autoload-dump": "@php ./vendor/bin/testbench package:discover --ansi"
+        "test-coverage": "vendor/bin/phpunit --coverage-html=cover/"
     },
     "config": {
         "sort-packages": true,
