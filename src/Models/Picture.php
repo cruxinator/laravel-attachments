@@ -2,6 +2,7 @@
 
 namespace Cruxinator\Attachments\Models;
 
+
 use function imagecolorat;
 use function imagecolorsforindex;
 use function imagesx;
