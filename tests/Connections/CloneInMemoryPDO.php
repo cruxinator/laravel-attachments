@@ -15,7 +15,7 @@ class CloneInMemoryPDO
 {
     protected static $structureCache = null;
 
-    private static function pdoQuery(PDO $con, $query, $values = array())
+    private static function pdoQuery(PDO $con, $query, $values = [])
     {
         if ($values) {
             $stmt = $con->prepare($query);
@@ -23,6 +23,7 @@ class CloneInMemoryPDO
         } else {
             $stmt = $con->query($query);
         }
+
         return $stmt;
     }
 
@@ -37,6 +38,7 @@ class CloneInMemoryPDO
         if (null === self::$structureCache) {
             self::$structureCache = self::cloneStructureToStringCore($from);
         }
+
         return self::$structureCache;
     }
 
@@ -51,7 +53,7 @@ class CloneInMemoryPDO
         while ($table = $tables->fetch(PDO::FETCH_ASSOC)) {
             $tableName = $table['name'];
             $sql .= self::pdoQuery($from, "SELECT sql FROM sqlite_master WHERE name = '{$tableName}'")->fetchColumn(
-                ) . ";\n\n";
+            ) . ";\n\n";
             $rows = $from->query("SELECT * FROM {$tableName}");
             $sql .= "INSERT INTO {$tableName} (";
             $columns = $from->query("PRAGMA table_info({$tableName})");
@@ -66,6 +68,7 @@ class CloneInMemoryPDO
                 }
                 $sql .= "\n(" . implode(",", $row) . "),";
             }
+
             return rtrim($sql, ",") . ";\n\n";
         }
     }

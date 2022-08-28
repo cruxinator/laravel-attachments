@@ -2,12 +2,12 @@
 
 namespace Cruxinator\Attachments\Http\Controllers;
 
+use Cruxinator\Attachments\Contracts\AttachmentContract;
+use Cruxinator\Attachments\Models\Attachment;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Lang;
-use Cruxinator\Attachments\Contracts\AttachmentContract;
-use Cruxinator\Attachments\Models\Attachment;
 
 class DownloadController extends Controller
 {

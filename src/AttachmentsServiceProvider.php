@@ -25,7 +25,7 @@ class AttachmentsServiceProvider extends PackageServiceProvider
                 [
                     CheckConfigBestPractice::class,
                     CleanupAttachments::class,
-                    MigrateAttachments::class
+                    MigrateAttachments::class,
                     ]
             );
         // Bind Model to Interface

@@ -3,8 +3,8 @@
 use Cruxinator\Attachments\Http\Controllers\DownloadController;
 use Cruxinator\Attachments\Http\Controllers\DropzoneController;
 use Cruxinator\Attachments\Http\Controllers\ShareController;
-use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Route;
 
 Route::group([
     'prefix' => Config::get('attachments.routes.prefix'),

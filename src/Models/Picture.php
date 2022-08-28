@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Cruxinator\Attachments\Models;
 
 use function imagecolorat;
@@ -34,6 +33,7 @@ class Picture extends Media
     public function getLuminanceAttribute(): ?int
     {
         $self = $this;
+
         return $this->getMetadata(
             'image.luminance',
             function () use ($self) {

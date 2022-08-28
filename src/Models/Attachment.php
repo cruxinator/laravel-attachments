@@ -4,26 +4,24 @@ namespace Cruxinator\Attachments\Models;
 
 use Carbon\Carbon;
 use Closure;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Facades\App;
-use Illuminate\Support\Facades\Config;
-use Illuminate\Support\Facades\Crypt;
-use Exception;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\File as FileHelper;
-use Illuminate\Contracts\Filesystem\FileNotFoundException;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\MorphTo;
-use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Storage;
-use League\Flysystem\Adapter\Local;
 use Cruxinator\Attachments\Contracts\AttachmentContract;
 use Cruxinator\Attachments\Traits\HasAttachments;
 use Cruxinator\SingleTableInheritance\SingleTableInheritanceTrait;
 use Cruxinator\SingleTableInheritance\Strings\MyStr;
-use Symfony\Component\HttpFoundation\File\File as FileObj;
+use Exception;
+use Illuminate\Contracts\Filesystem\FileNotFoundException;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\File as FileHelper;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
+use League\Flysystem\Adapter\Local;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 /**
@@ -72,10 +70,12 @@ class Attachment extends Model implements AttachmentContract
     #region "Single Table Inheritance"
     protected static $singleTableTypeField = 'type';
 
-    protected static function getSingleTableSubclasses(){
-        if(static::class !== self::class){
+    protected static function getSingleTableSubclasses()
+    {
+        if (static::class !== self::class) {
             return [];
         }
+
         return Config::get('attachments.attachment_sub_models');
     }
 
@@ -97,8 +97,8 @@ class Attachment extends Model implements AttachmentContract
     public static function attach(?string $uuid, Model $model, $options = []): ?self
     {
         $traits = class_uses_recursive($model);
-        if (!array_key_exists(HasAttachments::class, $traits)) {
-            throw new Exception ('Supplied Model must use Cruxinator\Attachments\Traits\HasAttachments trait');
+        if (! array_key_exists(HasAttachments::class, $traits)) {
+            throw new Exception('Supplied Model must use Cruxinator\Attachments\Traits\HasAttachments trait');
         }
 
         /** @var Attachment $attachment */
@@ -126,6 +126,7 @@ class Attachment extends Model implements AttachmentContract
         if ($found = $model->attachments()->where('key', '=', $attachment->key)->first()) {
             $found->delete();
         }
+
         return $attachment->attachedTo()->associate($model)->save() ? $attachment->refresh() : null;
     }
 
@@ -163,7 +164,7 @@ class Attachment extends Model implements AttachmentContract
      * @return $this|null
      * @throws FileNotFoundException
      */
-    public function fromFile(?string $filePath, ?string $disk = null) :?AttachmentContract
+    public function fromFile(?string $filePath, ?string $disk = null): ?AttachmentContract
     {
         if ($filePath === null) {
             return null;
@@ -203,11 +204,11 @@ class Attachment extends Model implements AttachmentContract
         $this->filepath = $this->buildFilepath();
 
         $this->putStream($stream, $this->filepath);
-        if($this->isLocalStorage()) {
+        if ($this->isLocalStorage()) {
             $dest = $this->getLocalRootPath().'/';
             $this->filesize = FileHelper::size($dest.$this->filepath);
             $this->filetype = FileHelper::mimeType($dest.$this->filepath);
-        }else {
+        } else {
             $driver = Storage::disk($this->disk);
             $this->filesize = $driver->size($this->filepath);
             $this->filetype = $driver->mimeType($this->filepath);
@@ -216,7 +217,8 @@ class Attachment extends Model implements AttachmentContract
         return $this;
     }
 
-    protected function getDefaultStorageDriver(){
+    protected function getDefaultStorageDriver()
+    {
         return config('attachments.storage_default_filesystem') ?? Storage::getDefaultDriver();
     }
 
@@ -459,11 +461,11 @@ class Attachment extends Model implements AttachmentContract
      */
     public function putStream($stream, string $filePath = null): bool
     {
-        if (!$filePath) {
+        if (! $filePath) {
             $filePath = $this->filepath;
         }
 
-        if (!$this->isLocalStorage()) {
+        if (! $this->isLocalStorage()) {
             return Storage::disk($this->disk)->putStream($filePath, $stream);
         }
 
@@ -481,6 +483,7 @@ class Attachment extends Model implements AttachmentContract
         }
 
         rewind($stream);
+
         return FileHelper::put($destinationPath.basename($filePath), stream_get_contents($stream));
     }
 
@@ -534,7 +537,7 @@ class Attachment extends Model implements AttachmentContract
      * Generates a disk name from the supplied file name.
      * @return string
      */
-    protected function getDiskName():string
+    protected function getDiskName(): string
     {
         if ($this->filepath !== null) {
             return $this->filepath;
@@ -674,7 +677,7 @@ class Attachment extends Model implements AttachmentContract
      * @return bool
      * @throws FileNotFoundException
      */
-    protected function copyToStorage(string $localPath, string $storagePath):bool
+    protected function copyToStorage(string $localPath, string $storagePath): bool
     {
         return Storage::disk($this->disk)->put($storagePath, FileHelper::get($localPath));
     }
@@ -733,6 +736,7 @@ class Attachment extends Model implements AttachmentContract
             $path = $this->getLocalRootPath();
             $args = array_map(function ($value) use ($path) {
                 $value = str_replace('/', DIRECTORY_SEPARATOR, $value);
+
                 return $path.DIRECTORY_SEPARATOR.$value;
             }, $args);
         } else {
@@ -770,6 +774,7 @@ class Attachment extends Model implements AttachmentContract
         }
 
         Attachment::where($keyName, '=', $oldKey)->update(['type' => static::class]);
+
         return Attachment::findOrFail($oldKey);
     }
     //endregion
@@ -777,12 +782,16 @@ class Attachment extends Model implements AttachmentContract
     public static function uuid_v4_base36()
     {
         //return uniqid();
-        return self::str_base_convert(sprintf('%04x%04x%04x%04x%04x%04x%04x%04x',
-            random_int(0, 0xffff), random_int(0, 0xffff),
+        return self::str_base_convert(sprintf(
+            '%04x%04x%04x%04x%04x%04x%04x%04x',
+            random_int(0, 0xffff),
+            random_int(0, 0xffff),
             random_int(0, 0xffff),
             random_int(0, 0x0fff) | 0x4000,
             random_int(0, 0x3fff) | 0x8000,
-            random_int(0, 0xffff), random_int(0, 0xffff), random_int(0, 0xffff)
+            random_int(0, 0xffff),
+            random_int(0, 0xffff),
+            random_int(0, 0xffff)
         ), 16, 36);
     }
 

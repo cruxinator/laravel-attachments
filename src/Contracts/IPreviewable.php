@@ -6,5 +6,5 @@ use Cruxinator\Attachments\Models\ResizablePicture;
 
 interface IPreviewable
 {
-    function getPreviewAttribute():?ResizablePicture;
+    public function getPreviewAttribute(): ?ResizablePicture;
 }

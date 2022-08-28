@@ -3,13 +3,13 @@
 namespace Cruxinator\Attachments\Http\Controllers;
 
 use Carbon\Carbon;
-use Illuminate\Support\Facades\Crypt;
+use Cruxinator\Attachments\Contracts\AttachmentContract;
 use Illuminate\Contracts\Encryption\DecryptException;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Lang;
-use Cruxinator\Attachments\Contracts\AttachmentContract;
 
 class ShareController extends Controller
 {
@@ -28,6 +28,7 @@ class ShareController extends Controller
     public function download($token, Request $request)
     {
         $disposition = null;
+
         try {
             $data = json_decode(Crypt::decryptString($token), null, 512, JSON_THROW_ON_ERROR);
         } catch (DecryptException $e) {

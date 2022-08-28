@@ -1,15 +1,13 @@
 <?php
 
-
 namespace Cruxinator\Attachments\Console\Commands;
 
-
+use Cruxinator\Attachments\Models\Attachment;
 use Exception;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Lang;
 use Illuminate\Support\Facades\Storage;
-use Cruxinator\Attachments\Models\Attachment;
 use Symfony\Component\Console\Input\InputOption;
 
 class CheckConfigBestPractice extends Command
@@ -65,7 +63,7 @@ class CheckConfigBestPractice extends Command
 
     private function checkAttachmentSubModel()
     {
-        $configEntry ='attachments.attachment_sub_models';
+        $configEntry = 'attachments.attachment_sub_models';
         foreach (Config::get($configEntry) as $subModel) {
             $this->checkClassExists($subModel);
             $this->checkChildClass($subModel, $configEntry);
@@ -85,7 +83,7 @@ class CheckConfigBestPractice extends Command
     private function checkChildClass($class, $configEntry)
     {
         $attachmentClass = Config::get('attachments.attachment_model');
-        if (get_parent_class($class) !==  $attachmentClass) {
+        if (get_parent_class($class) !== $attachmentClass) {
             $this->warn(
                 sprintf(
                     Lang::get('attachments::messages.console.check_warn_should_be_child'),
@@ -99,7 +97,7 @@ class CheckConfigBestPractice extends Command
 
     private function checkSubClass($class, $configEntry)
     {
-        if (!is_subclass_of($class, Attachment::class)) {
+        if (! is_subclass_of($class, Attachment::class)) {
             $this->warn(
                 sprintf(
                     Lang::get('attachments::messages.console.check_warn_should_inherit'),
@@ -113,7 +111,7 @@ class CheckConfigBestPractice extends Command
 
     private function checkClassExists($className)
     {
-        if (!class_exists($className)) {
+        if (! class_exists($className)) {
             $this->warn(
                 sprintf(
                     Lang::get('attachments::messages.console.check_warn_missing_class'),
@@ -126,7 +124,7 @@ class CheckConfigBestPractice extends Command
     private function checkOnlyModelOrStiUsed()
     {
         if (Config::get('attachments.attachment_model') !== Attachment::class &&
-            !empty(Config::get('attachments.attachment_sub_models'))
+            ! empty(Config::get('attachments.attachment_sub_models'))
         ) {
             $this->warn(Lang::get('attachments::messages.console.check_warn_inherit_and_sti'));
         }

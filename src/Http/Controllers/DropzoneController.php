@@ -2,6 +2,7 @@
 
 namespace Cruxinator\Attachments\Http\Controllers;
 
+use Cruxinator\Attachments\Contracts\AttachmentContract;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
@@ -9,7 +10,6 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Lang;
 use Illuminate\Support\Facades\Log;
-use Cruxinator\Attachments\Contracts\AttachmentContract;
 
 class DropzoneController extends Controller
 {

@@ -2,11 +2,11 @@
 
 namespace Cruxinator\Attachments\Console\Commands;
 
+use Cruxinator\Attachments\Contracts\AttachmentContract;
 use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Lang;
-use Cruxinator\Attachments\Contracts\AttachmentContract;
 use Symfony\Component\Console\Input\InputOption;
 
 class CleanupAttachments extends Command
@@ -28,9 +28,13 @@ class CleanupAttachments extends Command
 
         $this->setDescription(Lang::get('attachments::messages.console.cleanup_description'));
 
-        $this->getDefinition()->addOption(new InputOption('since', '-s', InputOption::VALUE_OPTIONAL,
-
-            Lang::get('attachments::messages.console.cleanup_option_since'), 1440));
+        $this->getDefinition()->addOption(new InputOption(
+            'since',
+            '-s',
+            InputOption::VALUE_OPTIONAL,
+            Lang::get('attachments::messages.console.cleanup_option_since'),
+            1440
+        ));
     }
 
     public function handle()

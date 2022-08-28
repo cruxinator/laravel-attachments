@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 /**
  * Created by PhpStorm.
@@ -6,6 +7,7 @@ declare(strict_types=1);
  * Date: 1/02/20
  * Time: 1:21 PM.
  */
+
 namespace Cruxinator\Attachments\Tests;
 
 use Cruxinator\Attachments\Models\Archive;
@@ -34,14 +36,14 @@ class TestCase extends BaseTestCase
     {
         // Brute-force set app namespace
         $reflec = new \ReflectionClass($app);
-        $prop   = $reflec->getProperty('namespace');
+        $prop = $reflec->getProperty('namespace');
         $prop->setAccessible(true);
         $prop->setValue($app, 'Cruxinator\\Orchestra\\');
         $app['config']->set('attachments.uuid_provider', Attachment::class.'@uuid_v4_base36');
         $app['config']->set('attachments.attachment_sub_models', [
             Media::class,
             Document::class,
-            Archive::class
+            Archive::class,
         ]);
 
         // spawn config defaults for routes
@@ -60,17 +62,17 @@ class TestCase extends BaseTestCase
         // Setup default database to use sqlite :memory:
         $app['config']->set('database.default', 'testbench');
         $app['config']->set('database.connections.testbench', [
-            'driver'   => 'sqlite',
+            'driver' => 'sqlite',
             'database' => ':memory:',
-            'prefix'   => '',
+            'prefix' => '',
         ]);
         $app['config']->set('database.connections.testbench-master', [
-            'driver'   => 'sqlite',
+            'driver' => 'sqlite',
             'database' => ':memory:',
-            'prefix'   => '',
+            'prefix' => '',
         ]);
-		/*
-		        if (env('database.default', false) === false) {
+        /*
+                if (env('database.default', false) === false) {
             $app['config']->set('database.default', 'test');
 
             $app['config']->set('database.connections.test', [
@@ -79,19 +81,19 @@ class TestCase extends BaseTestCase
                 'prefix' => '',
             ]);
         }
-		*/
+        */
     }
 
     public function setUp(): void
     {
         parent::setUp();
-		/*
-		        parent::setUp();
+        /*
+                parent::setUp();
         $this->artisan('migrate', ['--database' => 'test']);
         $this->beforeApplicationDestroyed(function () {
             $this->artisan('migrate:rollback', ['--database' => 'test']);
         });
-		*/
+        */
         $this->loadMigrationsFrom(realpath(__DIR__ . '/database/migrations'));
         date_default_timezone_set('UTC');
     }
@@ -108,14 +110,16 @@ class TestCase extends BaseTestCase
     protected static function resetMetadataProvider($provider)
     {
         $reset = function () {
-            self::$isBooted       = false;
-            self::$afterExtract   = null;
-            self::$afterUnify     = null;
-            self::$afterVerify    = null;
+            self::$isBooted = false;
+            self::$afterExtract = null;
+            self::$afterUnify = null;
+            self::$afterVerify = null;
             self::$afterImplement = null;
         };
+
         return call_user_func($reset->bindTo($provider, get_class($provider)));
     }
+
     protected function tearDown(): void
     {
         $config = app('config');
