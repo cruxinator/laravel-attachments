@@ -1,10 +1,9 @@
 <?php
 
-
 namespace Cruxinator\Attachments\Tests;
 
-use Cruxinator\Attachments\Models\ResizablePicture;
 use Cruxinator\Attachments\Models\Picture;
+use Cruxinator\Attachments\Models\ResizablePicture;
 use Cruxinator\Attachments\Tests\Fixtures\User;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\File;
@@ -43,11 +42,11 @@ class ResizablePictureTest extends TestCase
         $actual = ResizablePicture::keyAttachment($foo, $key);
         $this->assertEquals($att->getKey(), $actual->getKey());
     }
-    
+
     public function testOfProfileGoodSize()
     {
         $sizes = [
-            'sample' => ['width' => 360, 'height' => 360, 'invert' => 0, 'aspect' => 1, 'rotate' => -1]
+            'sample' => ['width' => 360, 'height' => 360, 'invert' => 0, 'aspect' => 1, 'rotate' => -1],
         ];
 
         config(['attachments.image.sizes' => $sizes]);
@@ -71,7 +70,7 @@ class ResizablePictureTest extends TestCase
         $att->attachable_type = '';
         $att->attachable_id = 0;
         $this->assertTrue($att->save());
-        
+
         $trim = $att->ofProfile('sample');
         $this->assertTrue($trim instanceof Picture);
         $this->assertFalse($trim instanceof ResizablePicture);
@@ -79,7 +78,7 @@ class ResizablePictureTest extends TestCase
         $this->assertEquals(30720, $trim->filesize);
         $this->assertEquals('image/png', $trim->filetype);
         $this->assertEquals('360x360___0_1', $trim->key);
-        
+
         // check original subordinate attachment is recycled
         $newTrim = $att->ofProfile('sample');
         $this->assertTrue($newTrim instanceof Picture);
@@ -123,12 +122,12 @@ class ResizablePictureTest extends TestCase
         $this->assertFalse($newTrim instanceof ResizablePicture);
         $this->assertEquals($trim->getKey(), $newTrim->getKey(), 'Existing attachment not recycled on second call');
     }
-    
+
     public function testOfProfileBadSize()
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('An Attempt to load profile didn\'t yield a valid sizes array. received data');
-        
+
         $att = new ResizablePicture();
         $att->disk = 'local';
         $att->filepath = '';
@@ -142,4 +141,3 @@ class ResizablePictureTest extends TestCase
         $trim = $att->ofProfile('sample');
     }
 }
-
