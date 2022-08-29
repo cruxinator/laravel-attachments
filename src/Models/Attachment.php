@@ -355,6 +355,7 @@ class Attachment extends Model implements AttachmentContract
         if ($this->useProxy()) {
             return $this->proxy_url;
         }
+
         return Storage::disk($this->disk)->url($this->filepath);
     }
 
@@ -364,6 +365,7 @@ class Attachment extends Model implements AttachmentContract
         if ($this->useProxy()) {
             return $this->proxy_url_inline;
         }
+
         return Storage::disk($this->disk)->url($this->filepath);
     }
 
@@ -661,6 +663,7 @@ class Attachment extends Model implements AttachmentContract
         }
 
         $files = $this->storageCommand('allFiles', $dir);
+
         return (is_countable($files) ? count($files) : 0) === 0;
     }
 
@@ -826,8 +829,8 @@ class Attachment extends Model implements AttachmentContract
      */
     protected function checkPath($destinationPath): bool
     {
-        return !FileHelper::isDirectory($destinationPath) &&
-            !FileHelper::makeDirectory($destinationPath, 0777, true, true) &&
-            !FileHelper::isDirectory($destinationPath);
+        return ! FileHelper::isDirectory($destinationPath) &&
+            ! FileHelper::makeDirectory($destinationPath, 0777, true, true) &&
+            ! FileHelper::isDirectory($destinationPath);
     }
 }
