@@ -27,7 +27,7 @@ class ResizablePicture extends Picture
      */
     public function ofProfile(string $profilerName = null, bool $inverse = false, bool $grayScale = false): ?Picture
     {
-        $size = empty($profilerName) ? $this->getXy() : config('image.sizes.'.$profilerName);
+        $size = empty($profilerName) ? $this->getXy() : config('attachments.image.sizes.'.$profilerName);
         if (! is_array($size) || ! array_key_exists('width', $size)) {
             throw new InvalidArgumentException(
                 "An Attempt to load profile" . var_export($profilerName) .
