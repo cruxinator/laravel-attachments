@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Cruxinator\Attachments\Tests;
 
 use Cruxinator\Attachments\Models\Picture;
@@ -35,7 +34,7 @@ class PictureTest extends TestCase
         $file = str_replace('/', DIRECTORY_SEPARATOR, $file);
         $main = File::get($file);
         File::shouldReceive('get')->andReturn($main);
-        
+
         $att = new Picture();
         $att->disk = 'local';
         $att->filepath = '';
@@ -45,7 +44,7 @@ class PictureTest extends TestCase
         $att->attachable_type = '';
         $att->attachable_id = 0;
         $this->assertTrue($att->save());
-        
+
         $expected = 127;
         $actual = $att->luminance;
         $this->assertEquals($expected, $actual, 'Unexpected luminance result');
