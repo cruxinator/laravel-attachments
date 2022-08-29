@@ -2,7 +2,6 @@
 
 namespace Cruxinator\Attachments\Models;
 
-use Cruxinator\Attachments\Contracts\IPreviewable;
 use App\Utils\GifTranscodeFilter;
 use App\Utils\PixelFormatFilter;
 use App\Utils\VideoMuteFilter;
