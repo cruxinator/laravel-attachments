@@ -46,10 +46,6 @@ trait HasAttachments
      */
     public function attachToModel($fileOrPath, array $options = []): ?Attachment
     {
-        if (! is_array($options)) {
-            throw new Exception('Attachment options must be an array');
-        }
-
         if (empty($fileOrPath)) {
             throw new Exception('Attached file is required');
         }
