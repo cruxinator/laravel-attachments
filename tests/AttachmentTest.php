@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Packages\Attachments;
+namespace Cruxinator\Attachments\Tests;
 
 use Cruxinator\Attachments\Models\Attachment;
 use Cruxinator\Attachments\Models\Picture;
