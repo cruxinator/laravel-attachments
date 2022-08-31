@@ -10,10 +10,11 @@ declare(strict_types=1);
 
 namespace Cruxinator\Attachments\Tests;
 
-use Cruxinator\Attachments\Models\Archive;
+use Cruxinator\Attachments\AttachmentsServiceProvider;
 use Cruxinator\Attachments\Models\Attachment;
-use Cruxinator\Attachments\Models\Document;
-use Cruxinator\Attachments\Models\Media;
+use Cruxinator\Attachments\Tests\Fixtures\Archive;
+use Cruxinator\Attachments\Tests\Fixtures\Document;
+use Cruxinator\Attachments\Tests\Fixtures\Media;
 use Orchestra\Testbench\TestCase as BaseTestCase;
 
 class TestCase extends BaseTestCase
@@ -21,7 +22,7 @@ class TestCase extends BaseTestCase
     protected function getPackageProviders($app)
     {
         return [
-            TestServiceProvider::class,
+            AttachmentsServiceProvider::class,
             /*\Orchestra\Database\ConsoleServiceProvider::class,*/];
     }
 
@@ -70,6 +71,11 @@ class TestCase extends BaseTestCase
             'driver' => 'sqlite',
             'database' => ':memory:',
             'prefix' => '',
+        ]);
+        $app['config']->set('attachment_sub_models',[
+            Media::class,
+            Document::class,
+            Archive::class,
         ]);
         /*
                 if (env('database.default', false) === false) {
