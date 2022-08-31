@@ -6,5 +6,4 @@ use Cruxinator\Attachments\Models\Attachment;
 
 class Archive extends Attachment
 {
-
 }
