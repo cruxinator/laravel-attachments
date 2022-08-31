@@ -53,8 +53,8 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Cruxinator\\Attachments\\Tests\\": "tests",
-            "Cruxinator\\Tests\\Connections\\": "tests/connections/"
+            "Cruxinator\\Attachments\\Tests\\": "tests/",
+            "Cruxinator\\Attachments\\Tests\\Connections\\": "tests/Connections/"
         }
     },
     "scripts": {
