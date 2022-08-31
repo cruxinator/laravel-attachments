@@ -2,7 +2,7 @@
 
 namespace Cruxinator\Attachments\Tests;
 
-use Cruxinator\Attachments\Models\Picture;
+use Cruxinator\LaravelAttachmentsMedia\Models\Picture;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\File;
 

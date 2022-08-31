@@ -31,7 +31,8 @@
         "ext-json": "*",
         "ext-bcmath": "*",
         "ext-gd": "*",
-        "cruxinator/responsemodels": "dev-master"
+        "cruxinator/responsemodels": "dev-master",
+        "cruxinator/laravel-attachments-media": "dev-master"
     },
     "require-dev": {
         "nunomaduro/larastan": ">=0.4.0",
