@@ -31,7 +31,7 @@
         "ext-json": "*",
         "ext-bcmath": "*",
         "ext-gd": "*",
-        "cruxinator/responsemodels": "dev-master"
+        "cruxinator/responsemodels": "dev-master",
     },
     "require-dev": {
         "nunomaduro/larastan": ">=0.4.0",
@@ -44,9 +44,7 @@
         "ext-pdo": "*",
         "ext-sqlite3": "*",
         "nunomaduro/collision": "^3.2",
-        "league/flysystem-sftp": "^1.0",
-        "pcov/clobber": "dev-master"
-
+        "league/flysystem-sftp": "^1.0"
     },
     "autoload": {
         "psr-4": {

@@ -43,9 +43,6 @@ return [
     |
     */
     'attachment_sub_models' => [
-        Cruxinator\Attachments\Models\Media::class,
-        Cruxinator\Attachments\Models\Document::class,
-        Cruxinator\Attachments\Models\Archive::class,
     ],
 
     /*
