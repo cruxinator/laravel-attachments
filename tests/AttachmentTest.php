@@ -3,8 +3,8 @@
 namespace Cruxinator\Attachments\Tests;
 
 use Cruxinator\Attachments\Models\Attachment;
-use Cruxinator\LaravelAttachmentsMedia\Models\Picture;
 use Cruxinator\Attachments\Tests\Fixtures\User;
+use Cruxinator\LaravelAttachmentsMedia\Models\Picture;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Testing\DatabaseTransactions;

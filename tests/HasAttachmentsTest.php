@@ -2,9 +2,9 @@
 
 namespace Cruxinator\Attachments\Tests;
 
+use Cruxinator\Attachments\Tests\Fixtures\User;
 use Cruxinator\LaravelAttachmentsMedia\Models\Attachment;
 use Cruxinator\LaravelAttachmentsMedia\Models\Picture;
-use Cruxinator\Attachments\Tests\Fixtures\User;
 use Exception;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\File;
