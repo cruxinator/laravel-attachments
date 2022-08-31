@@ -1,17 +1,13 @@
 <?php
 
-
 namespace Cruxinator\Attachments\Tests;
 
-use Exception;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Cruxinator\Attachments\Models\Attachment;
 use Cruxinator\Attachments\Models\Picture;
 use Cruxinator\Attachments\Tests\Fixtures\User;
-use Illuminate\Http\UploadedFile;
+use Exception;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Storage;
-use Mockery as m;
 
 class HasAttachmentsTest extends TestCase
 {
