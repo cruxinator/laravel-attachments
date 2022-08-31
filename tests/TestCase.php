@@ -72,7 +72,7 @@ class TestCase extends BaseTestCase
             'database' => ':memory:',
             'prefix' => '',
         ]);
-        $app['config']->set('attachment_sub_models',[
+        $app['config']->set('attachment_sub_models', [
             Media::class,
             Document::class,
             Archive::class,
