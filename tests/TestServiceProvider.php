@@ -31,7 +31,7 @@ class TestServiceProvider extends BaseServiceProvider
         $path = str_replace('/', DIRECTORY_SEPARATOR, $path);
         $this->loadMigrationsFrom($path);
         $routePath = __DIR__ . DIRECTORY_SEPARATOR . 'routes' . DIRECTORY_SEPARATOR . 'web.php';
-        $routePath = str_replace(DIRECTORY_SEPARATOR . 'tests', DIRECTORY_SEPARATOR . 'src', $routePath);
+        $routePath = str_replace(DIRECTORY_SEPARATOR . 'tests', '', $routePath);
         $this->loadRoutesFrom($routePath);
     }
 
