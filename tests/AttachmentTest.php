@@ -185,6 +185,17 @@ class AttachmentTest extends TestCase
 
                 break;
         }
+        
+        if ('existing' == $inputClass) {
+            if ($foo instanceof Attachment) {
+                $fooId = $foo->getKey();
+            } else {
+                $fooId = $foo;
+            }
+            // check attachment exists
+            $direct = Attachment::find($fooId);
+            $this->assertNotNull($direct, 'Direct attachment-exist check failed when attachment should already exist');
+        }
 
         $nuAtt = Picture::fromAttachment($foo);
         $this->assertEquals(Picture::class, $nuAtt->type);
