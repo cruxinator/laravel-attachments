@@ -26,7 +26,7 @@
         "cruxinator/laravel-html": "*",
         "cruxinator/laravel-package": "*",
         "cruxinator/singletableinheritance": "*",
-        "laravel/framework": "6.*",
+        "laravel/framework": "6.*|7.*",
         "php-ffmpeg/php-ffmpeg": "*",
         "ext-json": "*",
         "ext-bcmath": "*",
