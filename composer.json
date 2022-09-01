@@ -22,7 +22,6 @@
     ],
     "type": "library",
     "require": {
-        "php": "^7.3|^8.0",
         "cruxinator/laravel-html": "*",
         "cruxinator/laravel-package": "*",
         "cruxinator/singletableinheritance": "*",
