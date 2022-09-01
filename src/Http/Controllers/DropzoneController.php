@@ -58,7 +58,7 @@ class DropzoneController extends Controller
         try {
             if ($file = $this->model->where('uuid', $id)->first()) {
                 /** @var AttachmentContract $file */
-                if ($file->model_type || $file->model_id) {
+                if ($file->attachable_type || $file->attachable_id) {
                     return response(Lang::get('attachments::messages.errors.delete_denied'), 422);
                 }
 

@@ -27,8 +27,8 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 /**
  * @property int id
  * @property string uuid
- * @property int model_id
- * @property string model_type
+ * @property int attachable_id
+ * @property string attachable_type
  * @property string disk
  * @property string filepath     the full path on storage disk
  * @property string filename

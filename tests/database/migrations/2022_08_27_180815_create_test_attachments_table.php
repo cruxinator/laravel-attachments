@@ -27,7 +27,7 @@ class CreateTestAttachmentsTable extends Migration
             $table->string('title', 92)->nullable();
             $table->text('description')->nullable();
             $table->string('preview_url', 512)->nullable();
-            $table->morphs('attachable');
+            $table->nullableMorphs('attachable');
             $table->longText('metadata')->nullable();
             $table->timestamps();
         });
