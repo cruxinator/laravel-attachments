@@ -477,10 +477,7 @@ class Attachment extends Model implements AttachmentContract
         $destinationPath = $this->getLocalRootPath().'/'.pathinfo($filePath, PATHINFO_DIRNAME).'/';
 
         if ($this->checkPath($destinationPath)) {
-            $error = error_get_last();
-            if (null !== $error) {
-                trigger_error($error['message'], E_USER_WARNING);
-            }
+            $this->checkError();
         }
 
         rewind($stream);
@@ -511,11 +508,7 @@ class Attachment extends Model implements AttachmentContract
         $destinationPath = str_replace('/', DIRECTORY_SEPARATOR, $destinationPath);
 
         if ($this->checkPath($destinationPath)) {
-            $lastError = error_get_last();
-
-            if (null !== $lastError) {
-                trigger_error($lastError['message'], E_USER_WARNING);
-            }
+            $this->checkError();
         }
 
         return FileHelper::copy($sourcePath, $destinationPath.basename($filePath));
@@ -832,5 +825,13 @@ class Attachment extends Model implements AttachmentContract
         return ! FileHelper::isDirectory($destinationPath) &&
             ! FileHelper::makeDirectory($destinationPath, 0777, true, true) &&
             ! FileHelper::isDirectory($destinationPath);
+    }
+
+    protected function checkError(): void
+    {
+        $error = error_get_last();
+        if (null !== $error) {
+            trigger_error($error['message'], E_USER_WARNING);
+        }
     }
 }
