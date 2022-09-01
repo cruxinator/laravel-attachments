@@ -140,4 +140,27 @@ class AttachmentFileHandlingTest extends TestCase
 
         $res = $method->invoke($att, $bottom);
     }
+    
+    public function testDeleteAttachment()
+    {
+        File::shouldReceive('delete')->andReturn(true)->times(1);
+        File::shouldReceive('allFiles')->andReturn([]);
+        File::shouldReceive('deleteDirectory')->andReturn(true)->times(3);
+        File::shouldReceive('exists')->andReturn(true);
+        
+        $att = new Attachment();
+        $att->disk = 'local';
+        $att->filepath = 'foo/bar/baz/lain-cyberia-mix.png';
+        $att->filename = 'lain-cyberia-mix.png';
+        $att->filetype = 'image/png';
+        $att->filesize = 1020;
+        $att->attachable_type = '';
+        $att->attachable_id = 0;
+        $this->assertTrue($att->save());
+        
+        $this->assertEquals('foo/bar/baz', $att->path);
+        
+        $att->delete();
+    }
+    
 }
