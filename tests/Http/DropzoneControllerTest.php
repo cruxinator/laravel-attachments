@@ -2,12 +2,12 @@
 
 namespace Cruxinator\Attachments\Tests\Http;
 
+use Cruxinator\Attachments\Http\Controllers\DropzoneController;
+use Cruxinator\Attachments\Models\Attachment;
+use Cruxinator\Attachments\Tests\Fixtures\User;
 use Cruxinator\Attachments\Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Http\Request;
-use Cruxinator\Attachments\Models\Attachment;
-use Cruxinator\Attachments\Http\Controllers\DropzoneController;
-use Cruxinator\Attachments\Tests\Fixtures\User;
 use Illuminate\Http\Response;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\File;
@@ -37,7 +37,7 @@ class DropzoneControllerTest extends TestCase
             'key' => 'secret',
             'filename' => 'lain-cyberia-mix.png',
             'filesize' => 10240,
-            'filetype' => 'image/png'
+            'filetype' => 'image/png',
         ];
 
         /** @var Response $result */
@@ -67,6 +67,7 @@ class DropzoneControllerTest extends TestCase
         File::shouldReceive('copy')->andReturn(true)->once();
         File::shouldReceive('extension')->andReturn('png')->atLeast(1);
         File::shouldReceive('isDirectory')->andReturn(true)->once();
+
         return $file;
     }
 
@@ -128,7 +129,7 @@ class DropzoneControllerTest extends TestCase
     {
         Session::regenerateToken();
         $this->assertNotNull(csrf_token(), 'CSRF token should not be null');
-        
+
         $att = new Attachment();
         $att->disk = 'local';
         $att->filepath = '';

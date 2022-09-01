@@ -185,7 +185,7 @@ class AttachmentTest extends TestCase
 
                 break;
         }
-        
+
         if ('existing' == $inputClass) {
             if ($foo instanceof Attachment) {
                 $fooId = $foo->getKey();

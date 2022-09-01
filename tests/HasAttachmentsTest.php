@@ -65,7 +65,7 @@ class HasAttachmentsTest extends TestCase
         $res = $foo->attachToModel($upload, $options);
         $this->assertEquals($value, $res->{$field});
     }
-    
+
     public function testAttachmentMethod()
     {
         $foo = new User(['name' => 'name']);
@@ -80,14 +80,13 @@ class HasAttachmentsTest extends TestCase
         $att->group = 'aybabtu';
         $att->attachable()->associate($foo);
         $att->save();
-        
+
         $key = $att->refresh()->key;
-        
+
         $nuAtt = $foo->attachment($key);
         $this->assertTrue($nuAtt instanceof Attachment);
         $this->assertEquals($att->getKey(), $nuAtt->getKey());
-        
+
         $this->assertNull($foo->attachment('name'));
     }
-    
 }
