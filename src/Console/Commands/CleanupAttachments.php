@@ -41,8 +41,8 @@ class CleanupAttachments extends Command
     {
         if ($this->confirm(Lang::get('attachments::messages.console.cleanup_confirm'))) {
             $query = $this->model
-                ->whereNull('model_type')
-                ->whereNull('model_id')
+                ->whereNull('attachable_type')
+                ->whereNull('attachable_id')
                 ->where('updated_at', '<=', Carbon::now()->addMinutes(-1 * $this->option('since')));
 
             $progress = $this->output->createProgressBar($count = $query->count());
@@ -50,15 +50,14 @@ class CleanupAttachments extends Command
             if ($count) {
                 $query->chunk(100, function ($attachments) use ($progress) {
                     /** @var Collection $attachments */
-                    $attachments->each(function ($attachment) use ($progress) {
-                        /** @var AttachmentContract $attachment */
+                    $attachments->each(function (AttachmentContract $attachment) use ($progress) {
                         $attachment->delete();
 
                         $progress->advance();
                     });
                 });
 
-                $this->info(Lang::get('attachments::messages.console.done'));
+                $this->info(Lang::get('attachments::messages.console.cleanup_done'));
             } else {
                 $this->comment(Lang::get('attachments::messages.console.cleanup_no_data'));
             }

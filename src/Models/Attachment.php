@@ -293,7 +293,7 @@ class Attachment extends Model implements AttachmentContract
         parent::boot();
 
         if (config('attachments.behaviors.cascade_delete')) {
-            static::deleting(function (self $attachment): void {
+            static::deleted(function (self $attachment): void {
                 $attachment->deleteFile();
             });
         }
