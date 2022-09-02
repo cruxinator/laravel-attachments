@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Cruxinator\Attachments\Tests\Console;
 
 use Cruxinator\Attachments\Tests\TestCase;
@@ -55,7 +54,7 @@ class MigrateAttachmentsTest extends TestCase
         Lang::shouldReceive('get')->andReturn('');
 
         Storage::shouldReceive('disk->has')->andThrow(\Exception::class);
-        
+
         $res = Artisan::call('attachments:migrate', ['from' => $from, 'to' => $to]);
     }
 }

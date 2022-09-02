@@ -2,13 +2,12 @@
 
 namespace Cruxinator\Attachments\Tests\Console;
 
-use Cruxinator\Attachments\Tests\TestCase;
 use Cruxinator\Attachments\Tests\Fixtures\User;
+use Cruxinator\Attachments\Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Lang;
 use Illuminate\Support\Facades\Storage;
-use Symfony\Component\Console\Output\BufferedOutput;
 
 class CheckConfigBestPracticeTest extends TestCase
 {

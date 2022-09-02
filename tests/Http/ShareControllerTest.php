@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Cruxinator\Attachments\Tests\Http;
 
 use Cruxinator\Attachments\Http\Controllers\ShareController;
@@ -10,7 +9,6 @@ use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Crypt;
 use Mockery as m;
 use Symfony\Component\HttpKernel\Exception\HttpException;
@@ -26,13 +24,12 @@ class ShareControllerTest extends TestCase
 
         config(['app.key' => 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa']);
     }
-    
-    
+
     public function testBadToken()
     {
         $this->expectException(NotFoundHttpException::class);
         $this->expectExceptionMessage('File Not Found');
-        
+
         $request = m::mock(Request::class);
 
         $att = new Attachment();
@@ -42,26 +39,26 @@ class ShareControllerTest extends TestCase
 
         $res = $foo->download($token, $request);
     }
-    
+
     public function testExpiredToken()
     {
         $this->expectException(HttpException::class);
         $this->expectExceptionMessage('Token Expired');
-        
+
         $stamp = Carbon::now()->addHours(-5)->timestamp;
-        
+
         $payload = ['id' => 1, 'expire' => $stamp];
-        
+
         $token = Crypt::encryptString(json_encode($payload));
 
         $request = m::mock(Request::class);
 
         $att = new Attachment();
         $foo = new ShareController($att);
-        
+
         $res = $foo->download($token, $request);
     }
-    
+
     public function testGoodTokenMissingRecord()
     {
         $this->expectException(NotFoundHttpException::class);
@@ -80,7 +77,7 @@ class ShareControllerTest extends TestCase
 
         $res = $foo->download($token, $request);
     }
-    
+
     public function testGoodTokenWeirdDispositionFail()
     {
         $this->expectException(HttpException::class);
@@ -93,10 +90,10 @@ class ShareControllerTest extends TestCase
         $token = Crypt::encryptString(json_encode($payload));
 
         $request = m::mock(Request::class);
-        
+
         $att = m::mock(Attachment::class);
         $att->expects('output')->withArgs(['attachment'])->andReturn(false);
-        
+
         $model = m::mock(Attachment::class)->makePartial();
         $model->allows('where->first')->andReturn($att)->once();
 
