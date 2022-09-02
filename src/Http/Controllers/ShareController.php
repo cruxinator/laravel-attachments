@@ -33,8 +33,6 @@ class ShareController extends Controller
             $data = json_decode(Crypt::decryptString($token), null, 512, JSON_THROW_ON_ERROR);
         } catch (DecryptException $e) {
             abort(404, Lang::get('attachments::messages.errors.file_not_found'));
-
-            return;
         }
 
         $id = $data->id;
