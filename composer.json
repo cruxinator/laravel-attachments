@@ -43,7 +43,8 @@
         "ext-pdo": "*",
         "ext-sqlite3": "*",
         "nunomaduro/collision": "^3.2",
-        "league/flysystem-sftp": "^1.0"
+        "league/flysystem-sftp": "^1.0",
+        "infection/infection": "*"
     },
     "autoload": {
         "psr-4": {
@@ -64,7 +65,8 @@
     "config": {
         "sort-packages": true,
         "allow-plugins": {
-            "phpstan/extension-installer": true
+            "phpstan/extension-installer": true,
+            "infection/extension-installer": true
         }
     },
     "extra": {
