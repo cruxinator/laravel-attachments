@@ -30,12 +30,12 @@ class DownloadControllerTest extends TestCase
 
         $result = $controller->download('no-id', $req);
     }
-    
+
     public function testDownloadKaboom()
     {
         $this->expectException(NotFoundHttpException::class);
         $this->expectExceptionMessage('File Not Found');
-        
+
         $req = m::mock(Request::class);
         $req->allows('input')->withArgs(['disposition'])->andReturns('inline');
 
