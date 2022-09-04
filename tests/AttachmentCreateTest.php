@@ -6,7 +6,10 @@ use Cruxinator\Attachments\Models\Attachment;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Storage;
 use Mockery as m;
+use org\bovigo\vfs\vfsStream;
+use PHPStan\BetterReflection\Reflection\Adapter\ReflectionClass;
 
 class AttachmentCreateTest extends TestCase
 {
@@ -73,5 +76,51 @@ class AttachmentCreateTest extends TestCase
 
         $res = $foo->fromStream(null, 'lain-cyberia-mix.png');
         $this->assertNull($res);
+    }
+
+    public function testFromStreamLocal()
+    {
+        $root = vfsStream::setup('shfl');
+        $dir = vfsStream::url('shfl');
+
+        $file = vfsStream::newFile('mosh.txt')->at($root)->setContent('MOSH MOSH MOSH, BAGS OF MONEY');
+        $handle = fopen($file->url(), 'r');
+
+        $foo = new Attachment();
+        $foo->disk = 'local';
+       
+        $ref = new \ReflectionClass(Attachment::class);
+        $method = $ref->getMethod('isLocalStorage');
+        $method->setAccessible(true);;
+        $this->assertTrue($method->invoke($foo));
+        
+        $res = $foo->fromStream($handle, 'mosh.txt');
+        $this->assertTrue($res instanceof Attachment);
+        $this->assertEquals('mosh.txt', $res->filename);
+        $this->assertEquals($file->size(), $res->filesize);
+        $this->assertEquals('text/plain', $res->filetype);
+    }
+    
+    public function testPutStreamNoPathOffboard()
+    {
+        $root = vfsStream::setup('shfl');
+        $dir = vfsStream::url('shfl');
+
+        $file = vfsStream::newFile('mosh.txt')->at($root)->setContent('MOSH MOSH MOSH, BAGS OF MONEY');
+        $handle = fopen($file->url(), 'r');
+        
+        Storage::shouldReceive('disk->putStream')->andReturn(true)->once();
+        
+        $foo = new Attachment();
+        $foo->disk = 's3';
+        $foo->filepath = 'foopath.txt';
+
+        $ref = new \ReflectionClass(Attachment::class);
+        $method = $ref->getMethod('isLocalStorage');
+        $method->setAccessible(true);;
+        $this->assertFalse($method->invoke($foo));
+
+        $res = $foo->putStream($handle);
+        $this->assertTrue($res);
     }
 }

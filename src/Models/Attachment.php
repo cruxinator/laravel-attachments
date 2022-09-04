@@ -466,9 +466,7 @@ class Attachment extends Model implements AttachmentContract
      */
     public function putStream($stream, string $filePath = null): bool
     {
-        if (! $filePath) {
-            $filePath = $this->filepath;
-        }
+        $filePath = $this->unpackFilepath($filePath);
 
         if (! $this->isLocalStorage()) {
             return Storage::disk($this->disk)->putStream($filePath, $stream);
@@ -496,9 +494,7 @@ class Attachment extends Model implements AttachmentContract
      */
     public function putFile(string $sourcePath, string $filePath = null): bool
     {
-        if (! $filePath) {
-            $filePath = $this->filepath;
-        }
+        $filePath = $this->unpackFilepath($filePath);
 
         if (! $this->isLocalStorage()) {
             return $this->copyToStorage($sourcePath, $filePath);
@@ -833,5 +829,17 @@ class Attachment extends Model implements AttachmentContract
         if (null !== $error) {
             trigger_error($error['message'], E_USER_WARNING);
         }
+    }
+
+    /**
+     * @param string|null $filePath
+     * @return string|null
+     */
+    protected function unpackFilepath(?string $filePath): ?string
+    {
+        if (!$filePath) {
+            $filePath = $this->filepath;
+        }
+        return $filePath;
     }
 }
