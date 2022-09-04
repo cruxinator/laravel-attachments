@@ -837,9 +837,10 @@ class Attachment extends Model implements AttachmentContract
      */
     protected function unpackFilepath(?string $filePath): ?string
     {
-        if (!$filePath) {
+        if (! $filePath) {
             $filePath = $this->filepath;
         }
+
         return $filePath;
     }
 }
