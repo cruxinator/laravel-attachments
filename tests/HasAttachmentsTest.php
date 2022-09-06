@@ -5,9 +5,14 @@ namespace Cruxinator\Attachments\Tests;
 use Cruxinator\Attachments\Models\Attachment;
 use Cruxinator\Attachments\Tests\Fixtures\Picture;
 use Cruxinator\Attachments\Tests\Fixtures\User;
+use Cruxinator\Attachments\Tests\Fixtures\UserNoAttachments;
 use Exception;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Storage;
+use League\Flysystem\Sftp\SftpAdapter;
+use org\bovigo\vfs\vfsStream;
+use Mockery as m;
 
 class HasAttachmentsTest extends TestCase
 {
@@ -88,5 +93,58 @@ class HasAttachmentsTest extends TestCase
         $this->assertEquals($att->getKey(), $nuAtt->getKey());
 
         $this->assertNull($foo->attachment('name'));
+    }
+
+    public function testAttachToModelFromStreamWithoutFilenameKabooms()
+    {
+        $this->expectException(Exception::class);
+        $this->expectExceptionMessage('Attaching a resource requires options["filename"] to be set');
+
+        $root = vfsStream::setup('shfl');
+        $dir = vfsStream::url('shfl');
+
+        $file = vfsStream::newFile('mosh.txt')->at($root)->setContent('MOSH MOSH MOSH, BAGS OF MONEY');
+        $handle = fopen($file->url(), 'r');
+
+        $foo = new User(['name' => 'name']);
+        $this->assertTrue($foo->save());
+
+        $res = $foo->attachToModel($handle);
+    }
+
+    public function testAttachToModelFromStreamOnNonLocalDisk()
+    {
+        $root = vfsStream::setup('shfl');
+        $dir = vfsStream::url('shfl');
+
+        $file = vfsStream::newFile('mosh.txt')->at($root)->setContent('MOSH MOSH MOSH, BAGS OF MONEY');
+        $handle = fopen($file->url(), 'r');
+
+        $mockDisk = m::mock(SftpAdapter::class);
+        $mockDisk->expects('putStream')->andReturns(true);
+        $mockDisk->expects('size')->andReturns(29);
+        $mockDisk->expects('mimeType')->andReturns('text/plain');
+
+        Storage::shouldReceive('disk')->withArgs(['s3'])->andReturn($mockDisk);
+
+        $foo = new User(['name' => 'name']);
+        $this->assertTrue($foo->save());
+
+        $payload = [
+            'filename' => 'mosh.txt',
+            'disk' => 's3'
+        ];
+
+        $res = $foo->attachToModel($handle, $payload);
+        $this->assertTrue($res instanceof Attachment);
+    }
+
+    public function testAttachToBadTarget()
+    {
+        $this->expectExceptionMessage('Supplied Model must use Cruxinator\Attachments\Traits\HasAttachments trait');
+        
+        $foo = new UserNoAttachments();
+
+        Attachment::attach(null, $foo);
     }
 }

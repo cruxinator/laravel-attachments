@@ -72,7 +72,7 @@ trait HasAttachments
 
         if (is_resource($fileOrPath)) {
             if (empty($options['filename'])) {
-                throw new Exception('resources required options["filename"] to be set?');
+                throw new Exception('Attaching a resource requires options["filename"] to be set');
             }
 
             $attachment->fromStream($fileOrPath, $options['filename']);

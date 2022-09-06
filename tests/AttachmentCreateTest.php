@@ -3,6 +3,7 @@
 namespace Cruxinator\Attachments\Tests;
 
 use Cruxinator\Attachments\Models\Attachment;
+use Cruxinator\Attachments\Tests\Fixtures\AttachmentNoUuid;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\File;
@@ -123,5 +124,36 @@ class AttachmentCreateTest extends TestCase
 
         $res = $foo->putStream($handle);
         $this->assertTrue($res);
+    }
+
+    public function testCreateWithBadProvider()
+    {
+        $this->expectExceptionMessage('Missing UUID provider configuration for attachments');
+
+        config(['attachments.uuid_provider' => null]);
+
+        $att = new Attachment();
+        $att->disk = 'local';
+        $att->filepath = '';
+        $att->filename = 'lain-cyberia-mix.png';
+        $att->filetype = '';
+        $att->filesize = 0;
+
+        $att->save();
+    }
+
+    public function testCreateWithBadUUID()
+    {
+        $this->expectExceptionMessage('Failed to generate a UUID value');
+
+        $att = new AttachmentNoUuid();
+        $att->disk = 'local';
+        $att->filepath = '';
+        $att->filename = 'lain-cyberia-mix.png';
+        $att->filetype = '';
+        $att->filesize = 0;
+        $att->uuid = '';
+
+        $att->save();
     }
 }

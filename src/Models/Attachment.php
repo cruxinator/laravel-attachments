@@ -300,7 +300,7 @@ class Attachment extends Model implements AttachmentContract
 
         static::creating(function (self $attachment) {
             if (empty($attachment->uuid)) {
-                throw new Exception('Failed to generated an UUID value');
+                throw new Exception('Failed to generate a UUID value');
             }
 
             if (empty($attachment->key)) {
