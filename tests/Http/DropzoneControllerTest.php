@@ -10,7 +10,9 @@ use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Session;
 use Mockery as m;
 
@@ -69,6 +71,54 @@ class DropzoneControllerTest extends TestCase
         File::shouldReceive('isDirectory')->andReturn(true)->once();
 
         return $file;
+    }
+
+    public function testUploadDenied()
+    {
+        $closure = function () { return false; };
+        
+        Event::listen('attachments.dropzone.uploading', $closure);
+
+        config(['attachments.attributes' => ['title', 'description', 'key', 'disk', 'filepath', 'group']]);
+
+        $input = ['title' => 'title', 'description' => 'description', 'key' => 'secret', 'disk' => 'local'];
+
+        $req = m::mock(Request::class);
+
+        $model = new Attachment();
+
+        $controller = new DropzoneController($model);
+
+        /** @var Response $result */
+        $actual = $controller->post($req);
+        $this->assertEquals(403,  $actual->getStatusCode());
+        $this->assertEquals("Upload Denied", $actual->getContent());
+    }
+
+    public function testUploadFailed()
+    {
+        config(['attachments.attributes' => ['title', 'description', 'key', 'disk', 'filepath', 'group']]);
+
+        $input = ['title' => 'title', 'description' => 'description', 'key' => 'secret', 'disk' => 'local'];
+
+        $req = m::mock(Request::class);
+        $req->allows('input')->andReturns([]);
+        $req->allows('file')->andReturns([]);
+
+        $kaboom = m::mock(Attachment::class)->makePartial();
+        $kaboom->allows('save')->andThrow(\Exception::class, 'KABOOM!');
+        
+        $model = m::mock(Attachment::class)->makePartial();
+        $model->allows('fill->fromPost')->andReturns($kaboom);
+        
+        Log::shouldReceive('error')->withArgs(['Failed to upload attachment : KABOOM!', m::any()])->once();
+
+        $controller = new DropzoneController($model);
+
+        /** @var Response $result */
+        $actual = $controller->post($req);
+        $this->assertEquals(500,  $actual->getStatusCode());
+        $this->assertEquals("Upload Failed", $actual->getContent());
     }
 
     public function testDeleteSuccessful()
@@ -150,5 +200,66 @@ class DropzoneControllerTest extends TestCase
         $result = $controller->delete($uuid, $req);
         $this->assertEquals(401, $result->getStatusCode());
         $this->assertEquals('Delete Denied', $result->original);
+    }
+
+    public function testDeleteDenied()
+    {
+        $closure = function () { return false; };
+
+        Event::listen('attachments.dropzone.deleting', $closure);
+
+        config(['attachments.attributes' => ['title', 'description', 'key', 'disk', 'filepath', 'group']]);
+
+        $att = new Attachment();
+        $att->disk = 'local';
+        $att->filepath = '';
+        $att->filename = '';
+        $att->filetype = '';
+        $att->filesize = 0;
+        $att->group = 'aybabtu';
+        $att->save();
+
+        $req = m::mock(Request::class);
+
+        $model = new Attachment();
+
+        $controller = new DropzoneController($model);
+
+        /** @var Response $result */
+        $actual = $controller->delete($att->uuid, $req);
+        $this->assertEquals(403,  $actual->getStatusCode());
+        $this->assertEquals("Delete Denied", $actual->getContent());
+    }
+
+    public function testDeleteFailed()
+    {
+        $closure = function () { return false; };
+
+        Event::listen('attachments.dropzone.deleting', $closure);
+
+        config(['attachments.attributes' => ['title', 'description', 'key', 'disk', 'filepath', 'group']]);
+
+        $att = new Attachment();
+        $att->disk = 'local';
+        $att->filepath = '';
+        $att->filename = '';
+        $att->filetype = '';
+        $att->filesize = 0;
+        $att->group = 'aybabtu';
+        $att->save();
+
+        $req = m::mock(Request::class);
+
+        $model = m::mock(Attachment::class)->makePartial();
+        $model->allows('where')->andThrow(\Exception::class, 'KABOOM!');
+
+        Log::shouldReceive('error')->withArgs(['Failed to delete attachment : KABOOM!', m::any()])->once();
+        
+        $controller = new DropzoneController($model);
+
+        /** @var Response $result */
+        $actual = $controller->delete($att->uuid, $req);
+        $this->assertEquals(500,  $actual->getStatusCode());
+        $this->assertEquals("Delete Failed", $actual->getContent());
     }
 }

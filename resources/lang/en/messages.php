@@ -6,6 +6,7 @@ return [
         'upload_failed' => 'Upload Failed',
         'file_not_found' => 'File Not Found',
         'delete_denied' => 'Delete Denied',
+        'delete_failed' => 'Delete Failed',
         'expired' => 'Token Expired',
         'access_denied' => 'Access Denied'
     ],
