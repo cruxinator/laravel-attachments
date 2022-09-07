@@ -267,9 +267,12 @@ class Attachment extends Model implements AttachmentContract
         return $query->where('group', '=', $groupName);
     }
 
-    public function setAttachedToAttribute(HasAttachments $model)
+    public function setAttachedToAttribute(Model $model)
     {
-        assert($model instanceof Model, 'Has Attachments should be onb a Model');
+        $traits = class_uses_recursive($model);
+        if (!in_array(HasAttachments::class, $traits)) {
+            throw new \Exception('Attached model must use HasAttachments trait');
+        }
         $this->attachedTo()->associate($model);
     }
 

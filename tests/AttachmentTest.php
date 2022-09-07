@@ -329,4 +329,57 @@ class AttachmentTest extends TestCase
         $att->refresh();
         $this->assertNull($att->getMetadata('dz_session_key'), 'Dropzone key should be cleared by attachment');
     }
+
+    public function testOutputPrevented()
+    {
+        $closure = function () { return false;};
+        Attachment::outputting($closure);
+
+        $att = new Attachment();
+        $att->disk = 'local';
+        $att->filepath = '';
+        $att->filename = '';
+        $att->filetype = '';
+        $att->filesize = 0;
+        $att->group = 'aybabtu';
+        $att->save();
+
+        $this->assertFalse($att->output());
+    }
+    
+    public function testAttachToDirectGood()
+    {
+        $foo = new User(['name' => 'name']);
+        $this->assertTrue($foo->save());
+
+        $att = new Attachment();
+        $att->disk = 'local';
+        $att->filepath = '';
+        $att->filename = '';
+        $att->filetype = '';
+        $att->filesize = 0;
+        $att->group = 'aybabtu';
+        $att->save();
+        
+        $att->attachedTo = $foo;
+        
+        $nuParent = $att->attachedTo()->firstOrFail();
+        $this->assertEquals($foo->getKey(), $nuParent->getKey());
+    }
+    
+    public function testAttachToDirectBad()
+    {
+        $this->expectExceptionMessage('Attached model must use HasAttachments trait');
+        
+        $att = new Attachment();
+        $att->disk = 'local';
+        $att->filepath = '';
+        $att->filename = '';
+        $att->filetype = '';
+        $att->filesize = 0;
+        $att->group = 'aybabtu';
+        $att->save();
+        
+        $att->attachedTo = $att;
+    }
 }
