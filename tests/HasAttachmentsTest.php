@@ -11,8 +11,8 @@ use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use League\Flysystem\Sftp\SftpAdapter;
-use org\bovigo\vfs\vfsStream;
 use Mockery as m;
+use org\bovigo\vfs\vfsStream;
 
 class HasAttachmentsTest extends TestCase
 {
@@ -132,7 +132,7 @@ class HasAttachmentsTest extends TestCase
 
         $payload = [
             'filename' => 'mosh.txt',
-            'disk' => 's3'
+            'disk' => 's3',
         ];
 
         $res = $foo->attachToModel($handle, $payload);
@@ -142,7 +142,7 @@ class HasAttachmentsTest extends TestCase
     public function testAttachToBadTarget()
     {
         $this->expectExceptionMessage('Supplied Model must use Cruxinator\Attachments\Traits\HasAttachments trait');
-        
+
         $foo = new UserNoAttachments();
 
         Attachment::attach(null, $foo);

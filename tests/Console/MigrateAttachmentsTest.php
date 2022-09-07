@@ -83,12 +83,12 @@ class MigrateAttachmentsTest extends TestCase
         $att2->filesize = 0;
         $att2->group = 'aybabtu';
         $att2->save();
-        
+
         $local = m::mock(FilesystemAdapter::class)->makePartial();
         $local->expects('exists')->andReturns(true)->twice();
         $local->allows('has')->andReturns(true);
         $local->allows('get')->andReturns('HAMMERTIME');
-        
+
         $s3 = m::mock(FilesystemAdapter::class)->makePartial();
         $s3->allows('has')->andReturns(true);
         $s3->allows('put')->andReturns(true);
@@ -98,7 +98,7 @@ class MigrateAttachmentsTest extends TestCase
 
         $res = $this->artisan('attachments:migrate', ['from' => $from, 'to' => $to])->run();
         $this->assertEquals(0, $res);
-        
+
         $att1->refresh();
         $this->assertEquals('s3', $att1->disk, 'First attachment disk not updated');
         $att2->refresh();

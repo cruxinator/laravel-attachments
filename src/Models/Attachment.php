@@ -270,7 +270,7 @@ class Attachment extends Model implements AttachmentContract
     public function setAttachedToAttribute(Model $model)
     {
         $traits = class_uses_recursive($model);
-        if (!in_array(HasAttachments::class, $traits)) {
+        if (! in_array(HasAttachments::class, $traits)) {
             throw new \Exception('Attached model must use HasAttachments trait');
         }
         $this->attachedTo()->associate($model);

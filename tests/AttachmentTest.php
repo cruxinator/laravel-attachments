@@ -332,7 +332,9 @@ class AttachmentTest extends TestCase
 
     public function testOutputPrevented()
     {
-        $closure = function () { return false;};
+        $closure = function () {
+            return false;
+        };
         Attachment::outputting($closure);
 
         $att = new Attachment();
@@ -346,7 +348,7 @@ class AttachmentTest extends TestCase
 
         $this->assertFalse($att->output());
     }
-    
+
     public function testAttachToDirectGood()
     {
         $foo = new User(['name' => 'name']);
@@ -360,17 +362,17 @@ class AttachmentTest extends TestCase
         $att->filesize = 0;
         $att->group = 'aybabtu';
         $att->save();
-        
+
         $att->attachedTo = $foo;
-        
+
         $nuParent = $att->attachedTo()->firstOrFail();
         $this->assertEquals($foo->getKey(), $nuParent->getKey());
     }
-    
+
     public function testAttachToDirectBad()
     {
         $this->expectExceptionMessage('Attached model must use HasAttachments trait');
-        
+
         $att = new Attachment();
         $att->disk = 'local';
         $att->filepath = '';
@@ -379,7 +381,7 @@ class AttachmentTest extends TestCase
         $att->filesize = 0;
         $att->group = 'aybabtu';
         $att->save();
-        
+
         $att->attachedTo = $att;
     }
 }

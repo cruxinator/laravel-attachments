@@ -2,8 +2,8 @@
 
 namespace Cruxinator\Attachments\Tests\Console;
 
-use Cruxinator\Attachments\Tests\Fixtures\User;
 use Cruxinator\Attachments\Tests\Fixtures\Media;
+use Cruxinator\Attachments\Tests\Fixtures\User;
 use Cruxinator\Attachments\Tests\Fixtures\Video;
 use Cruxinator\Attachments\Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
@@ -83,7 +83,7 @@ class CheckConfigBestPracticeTest extends TestCase
         $res = $this->artisan('attachments:check_config');
         if ($shouldWarn) {
             $expected = Lang::get('attachments::messages.console.check_warn_inherit_and_sti');
-            
+
             $res->expectsOutput($expected);
         }
         $final = $res->run();

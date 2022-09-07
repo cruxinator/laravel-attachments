@@ -75,8 +75,10 @@ class DropzoneControllerTest extends TestCase
 
     public function testUploadDenied()
     {
-        $closure = function () { return false; };
-        
+        $closure = function () {
+            return false;
+        };
+
         Event::listen('attachments.dropzone.uploading', $closure);
 
         config(['attachments.attributes' => ['title', 'description', 'key', 'disk', 'filepath', 'group']]);
@@ -107,10 +109,10 @@ class DropzoneControllerTest extends TestCase
 
         $kaboom = m::mock(Attachment::class)->makePartial();
         $kaboom->allows('save')->andThrow(\Exception::class, 'KABOOM!');
-        
+
         $model = m::mock(Attachment::class)->makePartial();
         $model->allows('fill->fromPost')->andReturns($kaboom);
-        
+
         Log::shouldReceive('error')->withArgs(['Failed to upload attachment : KABOOM!', m::any()])->once();
 
         $controller = new DropzoneController($model);
@@ -204,7 +206,9 @@ class DropzoneControllerTest extends TestCase
 
     public function testDeleteDenied()
     {
-        $closure = function () { return false; };
+        $closure = function () {
+            return false;
+        };
 
         Event::listen('attachments.dropzone.deleting', $closure);
 
@@ -233,7 +237,9 @@ class DropzoneControllerTest extends TestCase
 
     public function testDeleteFailed()
     {
-        $closure = function () { return false; };
+        $closure = function () {
+            return false;
+        };
 
         Event::listen('attachments.dropzone.deleting', $closure);
 
@@ -254,7 +260,7 @@ class DropzoneControllerTest extends TestCase
         $model->allows('where')->andThrow(\Exception::class, 'KABOOM!');
 
         Log::shouldReceive('error')->withArgs(['Failed to delete attachment : KABOOM!', m::any()])->once();
-        
+
         $controller = new DropzoneController($model);
 
         /** @var Response $result */
