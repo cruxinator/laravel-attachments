@@ -3,10 +3,13 @@
 namespace Cruxinator\Attachments\Tests;
 
 use Cruxinator\Attachments\Models\Attachment;
+use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
+use Mockery as m;
 
 class AttachmentFileHandlingTest extends TestCase
 {
@@ -161,5 +164,26 @@ class AttachmentFileHandlingTest extends TestCase
         $this->assertEquals('foo/bar/baz', $att->path);
 
         $att->delete();
+    }
+    
+    public function testGetContentsFromNonLocal()
+    {
+        $att = new Attachment();
+        $att->disk = 's3';
+        $att->filepath = 'foo/bar/baz/lain-cyberia-mix.png';
+        $att->filename = 'lain-cyberia-mix.png';
+        $att->filetype = 'image/png';
+        $att->filesize = 1020;
+        $this->assertTrue($att->save());
+        
+        $disk = m::mock(FilesystemAdapter::class)->makePartial();
+        $disk->shouldReceive('get')->withArgs(['/foo/bar/baz/lain-cyberia-mix.png'])->andReturn('foobar')->once();
+        
+        Storage::shouldReceive('disk')->andReturn($disk)->atLeast(1);
+        
+        $expected = 'foobar';
+        $actual = $att->getContents();
+        
+        $this->assertEquals($expected, $actual);
     }
 }
