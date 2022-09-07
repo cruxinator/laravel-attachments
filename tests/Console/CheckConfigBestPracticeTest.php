@@ -3,6 +3,8 @@
 namespace Cruxinator\Attachments\Tests\Console;
 
 use Cruxinator\Attachments\Tests\Fixtures\User;
+use Cruxinator\Attachments\Tests\Fixtures\Media;
+use Cruxinator\Attachments\Tests\Fixtures\Video;
 use Cruxinator\Attachments\Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Facades\Artisan;
@@ -53,6 +55,38 @@ class CheckConfigBestPracticeTest extends TestCase
         Lang::shouldReceive('get')->withArgs(['attachments::messages.console.check_warn_should_be_child'])->times(3);
 
 
-        Artisan::call('attachments:check_config');
+        Artisan::call('attachments:check_config', ['--expert' => true]);
+    }
+
+    public function modelAndStiProvider(): array
+    {
+        $result = [];
+        $result['Attachment, empty submodels'] = [Attachment::class, [], false];
+        $result['Attachment, nonempty submodels'] = [Attachment::class, [Media::class], false];
+        $result['Non-attachment, empty submodels'] = [Media::class, [], false];
+        $result['Non-attachment, nonempty submodels'] = [Media::class, [Video::class], true];
+
+        return $result;
+    }
+
+    /**
+     * @dataProvider modelAndStiProvider
+     * @param string $attClass
+     * @param array $submodels
+     * @param bool $shouldWarn
+     */
+    public function testCheckBothModelAndStiUsed(string $attClass, array $submodels, bool $shouldWarn)
+    {
+        config(['attachments.attachment_model' => $attClass]);
+        config(['attachments.attachment_sub_models' => $submodels]);
+
+        $res = $this->artisan('attachments:check_config');
+        if ($shouldWarn) {
+            $expected = Lang::get('attachments::messages.console.check_warn_inherit_and_sti');
+            
+            $res->expectsOutput($expected);
+        }
+        $final = $res->run();
+        $this->assertEquals(0, $final);
     }
 }

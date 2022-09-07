@@ -32,7 +32,7 @@ class CheckConfigBestPractice extends Command
 
     public function handle()
     {
-        if ($this->hasOption('expert')) {
+        if ($this->option('expert')) {
             $this->info(Lang::get('attachments::messages.console.check_option_expert'));
         } else {
             $this->checkOnlyModelOrStiUsed();
