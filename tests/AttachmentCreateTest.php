@@ -3,8 +3,8 @@
 namespace Cruxinator\Attachments\Tests;
 
 use Cruxinator\Attachments\Models\Attachment;
-use Cruxinator\Attachments\Tests\Fixtures\Document;
 use Cruxinator\Attachments\Tests\Fixtures\AttachmentNoUuid;
+use Cruxinator\Attachments\Tests\Fixtures\Document;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\File;
@@ -127,7 +127,6 @@ class AttachmentCreateTest extends TestCase
         $this->assertTrue($res);
     }
 
-
     public function testPutStreamNoPathOnboard()
     {
         $root = vfsStream::setup('shfl');
@@ -144,7 +143,7 @@ class AttachmentCreateTest extends TestCase
         $method = $ref->getMethod('isLocalStorage');
         $method->setAccessible(true);
         $this->assertTrue($method->invoke($foo));
-        
+
         File::shouldReceive('isDirectory')->andReturn(false)->twice();
         File::shouldReceive('makeDirectory')->andReturn(false)->once();
         File::shouldReceive('put')->andReturn(true);

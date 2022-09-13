@@ -384,7 +384,7 @@ class AttachmentTest extends TestCase
 
         $att->attachedTo = $att;
     }
-    
+
     public function testUuidGeneration()
     {
         $actual = Attachment::uuid_v4_base36();

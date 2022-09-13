@@ -2,9 +2,9 @@
 
 namespace Cruxinator\Attachments\Tests\Console;
 
+use Cruxinator\Attachments\Console\Commands\CleanUpAttachments;
 use Cruxinator\Attachments\Models\Attachment;
 use Cruxinator\Attachments\Tests\TestCase;
-use Cruxinator\Attachments\Console\Commands\CleanUpAttachments;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\PendingCommand;
@@ -65,12 +65,12 @@ class CleanupAttachmentsTest extends TestCase
             ->expectsOutput('No expired attachments found')
             ->assertExitCode(0)->run();
     }
-    
+
     public function testCheckSinceDefaultValue()
     {
         /** @var CleanUpAttachments\ $foo */
         $foo = App::make(CleanupAttachments::class);
-        
+
         /** @var InputDefinition $def */
         $def = $foo->getDefinition();
         /** @var InputOption $option */
