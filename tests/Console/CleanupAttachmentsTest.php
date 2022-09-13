@@ -4,11 +4,15 @@ namespace Cruxinator\Attachments\Tests\Console;
 
 use Cruxinator\Attachments\Models\Attachment;
 use Cruxinator\Attachments\Tests\TestCase;
+use Cruxinator\Attachments\Console\Commands\CleanUpAttachments;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\PendingCommand;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\File;
+use Symfony\Component\Console\Input\InputDefinition;
+use Symfony\Component\Console\Input\InputOption;
 
 class CleanupAttachmentsTest extends TestCase
 {
@@ -32,6 +36,9 @@ class CleanupAttachmentsTest extends TestCase
         File::shouldReceive('deleteDirectory')->andReturn(true);
         File::shouldReceive('exists')->andReturn(true);
 
+        $now = now();
+        Carbon::setTestNow($now);
+
         $att = new Attachment();
         $att->disk = 'local';
         $att->filepath = '';
@@ -41,7 +48,7 @@ class CleanupAttachmentsTest extends TestCase
         $this->assertTrue($att->save());
         $id = $att->getKey();
 
-        $now = now()->addDays(2);
+        $now = now()->addMinutes(1440);
         Carbon::setTestNow($now);
 
         /** @var PendingCommand $res */
@@ -57,5 +64,18 @@ class CleanupAttachmentsTest extends TestCase
             ->expectsQuestion('Clean up expired attachments?', true)
             ->expectsOutput('No expired attachments found')
             ->assertExitCode(0)->run();
+    }
+    
+    public function testCheckSinceDefaultValue()
+    {
+        /** @var CleanUpAttachments\ $foo */
+        $foo = App::make(CleanupAttachments::class);
+        
+        /** @var InputDefinition $def */
+        $def = $foo->getDefinition();
+        /** @var InputOption $option */
+        $option = $def->getOption('since');
+        $this->assertEquals(1440, $option->getDefault());
+        $this->assertEquals('s', $option->getShortcut());
     }
 }

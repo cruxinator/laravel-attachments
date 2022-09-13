@@ -3,6 +3,7 @@
 namespace Cruxinator\Attachments\Tests;
 
 use Cruxinator\Attachments\Models\Attachment;
+use Cruxinator\Attachments\Tests\Fixtures\Document;
 use Cruxinator\Attachments\Tests\Fixtures\AttachmentNoUuid;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Http\UploadedFile;
@@ -121,6 +122,32 @@ class AttachmentCreateTest extends TestCase
         $method->setAccessible(true);
         ;
         $this->assertFalse($method->invoke($foo));
+
+        $res = $foo->putStream($handle);
+        $this->assertTrue($res);
+    }
+
+
+    public function testPutStreamNoPathOnboard()
+    {
+        $root = vfsStream::setup('shfl');
+        $dir = vfsStream::url('shfl');
+
+        $file = vfsStream::newFile('mosh.txt')->at($root)->setContent('MOSH MOSH MOSH, BAGS OF MONEY');
+        $handle = fopen($file->url(), 'r');
+
+        $foo = new Document();
+        $foo->disk = 'local';
+        $foo->filepath = 'foopath.txt';
+
+        $ref = new \ReflectionClass(Document::class);
+        $method = $ref->getMethod('isLocalStorage');
+        $method->setAccessible(true);
+        $this->assertTrue($method->invoke($foo));
+        
+        File::shouldReceive('isDirectory')->andReturn(false)->twice();
+        File::shouldReceive('makeDirectory')->andReturn(false)->once();
+        File::shouldReceive('put')->andReturn(true);
 
         $res = $foo->putStream($handle);
         $this->assertTrue($res);

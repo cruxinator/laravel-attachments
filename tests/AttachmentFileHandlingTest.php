@@ -3,6 +3,7 @@
 namespace Cruxinator\Attachments\Tests;
 
 use Cruxinator\Attachments\Models\Attachment;
+use Cruxinator\Attachments\Tests\Fixtures\Document;
 use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Http\Response;
@@ -185,5 +186,22 @@ class AttachmentFileHandlingTest extends TestCase
         $actual = $att->getContents();
 
         $this->assertEquals($expected, $actual);
+    }
+
+    public function testPutFileOffboard()
+    {
+        $att = new Document();
+        $att->disk = 's3';
+        $att->filepath = 'foo/bar/baz/lain-cyberia-mix.png';
+        $att->filename = 'lain-cyberia-mix.png';
+        $att->filetype = 'image/png';
+        $att->filesize = 1020;
+        $this->assertTrue($att->save());
+
+        File::shouldReceive('get')->andReturn('fnord')->once();
+        Storage::shouldReceive('disk->put')->andReturn(true)->once();
+
+        $res = $att->putFile('foobar.txt');
+        $this->assertTrue($res);
     }
 }
