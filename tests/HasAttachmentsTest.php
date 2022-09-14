@@ -8,6 +8,7 @@ use Cruxinator\Attachments\Tests\Fixtures\User;
 use Cruxinator\Attachments\Tests\Fixtures\UserNoAttachments;
 use Exception;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use League\Flysystem\Sftp\SftpAdapter;
@@ -146,5 +147,31 @@ class HasAttachmentsTest extends TestCase
         $foo = new UserNoAttachments();
 
         Attachment::attach(null, $foo);
+    }
+
+    public function testAttachToModelWithUploadedFile()
+    {
+        $upload = UploadedFile::fake()->image('foobar.png');
+
+        $foo = new User(['name' => 'name']);
+        $this->assertTrue($foo->save());
+
+        $att = new Attachment();
+        $att->disk = 'local';
+        $att->filepath = '';
+        $att->filename = '';
+        $att->filetype = '';
+        $att->filesize = 0;
+        $att->key = 'foobar';
+        $att->attachable()->associate($foo);
+        $att->save();
+        $oldId = $att->getKey();
+
+        $options = ['key' => 'foobar'];
+        
+        $newAtt = $foo->attachToModel($upload, $options);
+        $this->assertTrue($newAtt instanceof Attachment, get_class($newAtt));
+        
+        $this->assertNull(Attachment::find($oldId), "Old attachment with same key not flattened");
     }
 }

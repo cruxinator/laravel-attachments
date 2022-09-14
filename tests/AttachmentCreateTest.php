@@ -3,8 +3,9 @@
 namespace Cruxinator\Attachments\Tests;
 
 use Cruxinator\Attachments\Models\Attachment;
-use Cruxinator\Attachments\Tests\Fixtures\AttachmentNoUuid;
 use Cruxinator\Attachments\Tests\Fixtures\Document;
+use Cruxinator\Attachments\Tests\Fixtures\AttachmentNoUuid;
+use Cruxinator\Attachments\Tests\Fixtures\User;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\File;
@@ -181,5 +182,36 @@ class AttachmentCreateTest extends TestCase
         $att->uuid = '';
 
         $att->save();
+    }
+
+    public function testAttachModelWithReplacementKey()
+    {
+        $foo = new User(['name' => 'name']);
+        $this->assertTrue($foo->save());
+
+        $att = new Attachment();
+        $att->disk = 'local';
+        $att->filepath = '';
+        $att->filename = '';
+        $att->filetype = '';
+        $att->filesize = 0;
+        $att->key = 'foobar';
+        $att->attachable()->associate($foo);
+        $att->save();
+
+        $nuAtt = new Attachment();
+        $nuAtt->disk = 'local';
+        $nuAtt->filepath = '';
+        $nuAtt->filename = '';
+        $nuAtt->filetype = '';
+        $nuAtt->filesize = 0;
+        $nuAtt->key = 'notfoobar';
+        $nuAtt->save();
+        $oldId = $att->getKey();
+
+        $options = ['key' => 'foobar'];
+
+        $res = Attachment::attach($nuAtt->uuid, $foo, $options);
+        $this->assertNull(Attachment::find($oldId), "Old attachment with same key not flattened");
     }
 }
