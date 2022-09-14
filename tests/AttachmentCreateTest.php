@@ -3,8 +3,8 @@
 namespace Cruxinator\Attachments\Tests;
 
 use Cruxinator\Attachments\Models\Attachment;
-use Cruxinator\Attachments\Tests\Fixtures\Document;
 use Cruxinator\Attachments\Tests\Fixtures\AttachmentNoUuid;
+use Cruxinator\Attachments\Tests\Fixtures\Document;
 use Cruxinator\Attachments\Tests\Fixtures\User;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Http\UploadedFile;

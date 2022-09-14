@@ -137,7 +137,7 @@ class AttachmentAttributesTest extends TestCase
         $ref = new \ReflectionClass($att);
         $method = $ref->getMethod('getDiskName');
         $method->setAccessible(true);
-        
+
         $actual = $method->invoke($att);
         $this->assertEquals($att->filepath, $actual);
     }

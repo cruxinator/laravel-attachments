@@ -168,10 +168,10 @@ class HasAttachmentsTest extends TestCase
         $oldId = $att->getKey();
 
         $options = ['key' => 'foobar'];
-        
+
         $newAtt = $foo->attachToModel($upload, $options);
         $this->assertTrue($newAtt instanceof Attachment, get_class($newAtt));
-        
+
         $this->assertNull(Attachment::find($oldId), "Old attachment with same key not flattened");
     }
 }
