@@ -33,6 +33,7 @@ class DownloadController extends Controller
                 if (! $result) {
                     abort(403, Lang::get('attachments::messages.errors.access_denied'));
                 }
+
                 return $result;
             } catch (FileNotFoundException $e) {
                 abort(404, Lang::get('attachments::messages.errors.file_not_found'));
