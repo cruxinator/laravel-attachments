@@ -8,6 +8,7 @@ use Cruxinator\Attachments\Tests\TestCase;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Mockery as m;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -69,5 +70,23 @@ class DownloadControllerTest extends TestCase
         $controller = new DownloadController($model);
 
         $result = $controller->download('no-id', $req);
+    }
+
+    public function testDownloadSuccessful()
+    {
+        $req = m::mock(Request::class);
+        $req->allows('input')->withArgs(['disposition'])->andReturns('inline');
+
+        $att = m::mock(Attachment::class)->makePartial();
+        $att->expects('output')->passthru();
+        $att->allows('getContents')->andReturns('fnord');
+
+        $model = m::mock(Attachment::class)->makePartial();
+        $model->allows('where->first')->andReturn($att)->once();
+
+        $controller = new DownloadController($model);
+
+        $result = $controller->download('no-id', $req);
+        $this->assertTrue($result instanceof Response);
     }
 }

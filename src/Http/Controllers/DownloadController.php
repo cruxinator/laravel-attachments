@@ -29,10 +29,11 @@ class DownloadController extends Controller
         if ($file = $this->model->where('uuid', $id)->first()) {
             try {
                 /** @var Attachment $file */
-                $file->getContents();
-                if (! $file->output($disposition)) {
+                $result = $file->output($disposition);
+                if (! $result) {
                     abort(403, Lang::get('attachments::messages.errors.access_denied'));
                 }
+                return $result;
             } catch (FileNotFoundException $e) {
                 abort(404, Lang::get('attachments::messages.errors.file_not_found'));
             }
